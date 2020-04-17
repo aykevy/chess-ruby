@@ -4,10 +4,12 @@ require_relative "tools/sliding_piece"
 require_relative "tools/stepping_piece"
 require_relative "tools/pawns"
 require_relative "tools/board_modules/setup_module"
+require_relative "tools/board_modules/display_module"
 
 class Board
 
     include Setup
+    include Display
 
     attr_accessor :rows, :moves_list
 
@@ -72,7 +74,7 @@ class Board
             dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
 
             dup_board.check(move) ? invalid << move : valid << [[r1, c1], move]
-            #dup_board.print_board
+            #print_board(dup_board.rows)
         end
         [valid, invalid]
     end
@@ -141,38 +143,6 @@ class Board
         #Then it is stalemate.
     end
 
-    def print_board
-        puts "   0   1   2   3   4   5   6   7 "
-        puts "---------------------------------"
-        @rows.each_with_index do | sub_arr, idx |
-            render_row = "#{idx}  "
-            sub_arr.each do | piece |
-                if piece.is_a?(NullPiece)
-                    render_row += ". "
-                else
-                    piece.color == :white ? render_row += "*" : render_row += "$"
-                    case piece.symbol
-                    when :pawn
-                        render_row += "P"
-                    when :rook
-                        render_row += "R"
-                    when :knight
-                        render_row += "N"
-                    when :bishop
-                        render_row += "B"
-                    when :queen
-                        render_row += "Q"
-                    when :king
-                        render_row += "K"
-                    end
-                end
-                render_row += "  "
-            end
-            puts render_row
-        end
-        puts
-    end
-
     def valid_move?(start, dest)
         x, y = start
         valid_moves = @rows[x][y].get_moves
@@ -209,7 +179,7 @@ class Board
         @rows[r2][c2].set_symbol(piece_type)
 
         #-----Testing Here-----
-        #print_board
+        #print_board(@rows)
 
     end
 end

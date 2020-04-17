@@ -1,13 +1,15 @@
 require_relative "board"
 require_relative "tools/board_modules/simulation_module"
+require_relative "tools/board_modules/display_module"
 
 class Game
 
     include Simulation
+    include Display
 
     def initialize
         @board = Board.new()
-        @board.print_board
+        print_board(@board.rows)
     end
 
     def get_kings
@@ -23,14 +25,13 @@ class Game
         [white_king, black_king]
     end
     
-
     def play
 
         simulation_2(@board)
 
         while true
 
-            @board.print_board
+            print_board(@board.rows)
 
             white_king, black_king = self.get_kings
 

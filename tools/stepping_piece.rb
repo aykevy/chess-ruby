@@ -9,14 +9,14 @@ class SteppingPiece < Piece
         super
     end
 
-    def set_symbol(s)
-        @symbol = s
-    end
-    
     def copy_king(c, b, p, s)
         copy_piece = SteppingPiece.new(c, b, p)
         copy_piece.set_symbol(s)
         copy_piece
+    end
+
+    def set_symbol(s)
+        @symbol = s
     end
 
     def piece?(pos)
