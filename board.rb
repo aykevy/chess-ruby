@@ -136,7 +136,7 @@ class Board
     end
 
     def stalemate(color)
-        puts color
+        puts "Stalemate"
         #If the kings moves are all invalid (moves would put them in check)
         #If all the pieces of the color has no valid moves
         #Most importantly, the king is not in check
@@ -146,9 +146,9 @@ class Board
     def valid_move?(start, dest)
         x, y = start
         valid_moves = @rows[x][y].get_moves
-        #puts
-        #print valid_moves
-        #puts
+        puts
+        print valid_moves
+        puts
         valid_moves.include?(dest)
     end
 

@@ -15,6 +15,34 @@ class SteppingPiece < Piece
         copy_piece
     end
 
+    def castle
+        #Can't be in check
+        #Can't be in check after castling
+        #Neither the king nor the rook ur tryna castle to 
+        #should have moved since the game started
+        #Long Castle and Short Castle differs for black and white
+        
+        #Queen Side Castling
+        #Black Side
+        #   Queen Side
+        #       No pieces in [0, 1], [0, 2], [0, 3] before castling
+        #       King = [0, 2] Rook = [0, 3]
+        #   King Side
+        #       No pieces in [0, 5], [0, 6]
+        #       King = [0, 6] Rook = [0, 5]
+        #
+
+        #White Side
+        #   Queen Side
+        #       No pieces in [7, 1], [7, 2], [7, 3] before castling
+        #       King = [7, 2] Rook = [7, 3]
+        #   King Side
+        #       No pieces in [7, 5], [7, 6]
+        #       King = [7, 6] Rook = [7, 5]
+        #
+        puts "Hi"
+    end
+
     def set_symbol(s)
         @symbol = s
     end
