@@ -16,11 +16,10 @@ class SteppingPiece < Piece
     end
 
     def castle
-        #Can't be in check
-        #Can't be in check after castling
-        #Neither the king nor the rook ur tryna castle to 
-        #should have moved since the game started
-        #Long Castle and Short Castle differs for black and white
+        #Castle Rules:
+        #   Can't be in check
+        #   Can't be in check after castling
+        #   Neither the king nor the rook your trying to castle to should have moved
         
         #Queen Side Castling
         #Black Side
@@ -32,6 +31,7 @@ class SteppingPiece < Piece
         #       King = [0, 6] Rook = [0, 5]
         #
 
+        #King Side Castling
         #White Side
         #   Queen Side
         #       No pieces in [7, 1], [7, 2], [7, 3] before castling
@@ -40,6 +40,7 @@ class SteppingPiece < Piece
         #       No pieces in [7, 5], [7, 6]
         #       King = [7, 6] Rook = [7, 5]
         #
+        
         puts "Hi"
     end
 

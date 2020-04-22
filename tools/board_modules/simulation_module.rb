@@ -1,6 +1,7 @@
 module Simulation
 
-    #King can capture a piece checking him while there is two pieces
+    #Test 1:
+    #King can capture a piece checking him while there is two pieces checking him.
     def simulation_1(board)
         simulate_intro = [
             [[1,3], [2,3]], 
@@ -19,8 +20,9 @@ module Simulation
         end
     end
 
+    #Test 2:
     #Another piece of the kings color can capture a piece that is currently
-    #checkign the king.
+    #checking the king if the king can't check.
     def simulation_2(board)
         simulate_intro = [
             [[1,3], [2,3]], 
@@ -40,5 +42,33 @@ module Simulation
             board.move_piece(start, dest)
         end
     end
+
+    #Test 3:
+    #Another simulation to show that you can capture with a king or just capture
+    #with another piece when in check.
+    def simulation_3(board)
+        simulate_intro = [
+            [[1,3], [2,3]], 
+            [[2,3], [3,3]], 
+            [[6,3], [5,3]], 
+            [[5,3], [4,3]],
+            [[0,3], [2,3]],
+            [[2,3], [4,1]],
+            [[4,1], [4,3]],
+            [[4,3], [7,3]],
+            [[7,1], [5,2]],
+            [[7,0], [4,3]]
+        ]
+
+        simulate_intro.each do | start, dest = sub_arr |
+            board.move_piece(start, dest)
+        end
+    end
+
+    #Test 4: After castling create a check
+
+    #Test 5: After castling checkmate the other king
+
+    #Test 6: Stalemate
 
 end

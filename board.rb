@@ -116,8 +116,6 @@ class Board
             return viable_moves
         else
             puts "Not yet checkmated, possible moves kill checker: #{viable_moves}"
-            #!!!! GOTTA COMBINE WITH VALID MOVES CAUSE U WANT TO GIVE THEM THE OPTION
-            #TO TAKE WITH KING OR KILL WITH OTHER PIECES
             return viable_moves
         end
     end
@@ -127,10 +125,12 @@ class Board
         #puts "Valid: #{valid_action}"
         #puts "Invalid: #{invalid_action}"
 
-        if valid_action.empty?
+        if valid_action.empty? #No moves from the king
             return check_king_rescue(invalid_action, king)
         else
+            valid_action += check_king_rescue(invalid_action, king)
             puts "Not yet checkmated, possible moves: #{valid_action}"
+
             return valid_action
         end
     end
