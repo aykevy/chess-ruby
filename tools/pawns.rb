@@ -6,6 +6,12 @@ class Pawn < Piece
         super
     end
 
+    def copy(c, b, p, s)
+        copy_piece = Pawn.new(c, b, p)
+        copy_piece.set_symbol(s)
+        copy_piece
+    end
+
     def set_symbol(s)
         @symbol = s
     end

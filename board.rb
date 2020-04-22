@@ -65,7 +65,7 @@ class Board
         moves.each_with_index do | move, idx |
 
             dup_board = copy
-            dup_piece = king.copy_king(king.color, dup_board, move, king.symbol)
+            dup_piece = king.copy(king.color, dup_board, move, king.symbol)
 
             r1, c1 = king.pos
             r2, c2 = move
@@ -78,55 +78,43 @@ class Board
         [valid, invalid_des]
     end
 
-    def check_king_rescue(king)
-        #The purpose of this function is to check if there are any pieces that can capture
-        #the attacking piece that is currently checking the king.
-
-        checking_pieces = []
-
+    def check_king_guards(king)
+        blocking_moves = []
         @rows.each do | row |
             row.each do | piece |
-                checking_pieces << piece if piece?(piece.pos) && piece.get_moves.include?(king.pos)
-            end
-        end
+                if piece?(piece.pos) && piece.color == king.color
+                    moves = piece.get_moves
+                    moves.each_with_index do | move, idx |
+                        dup_board = copy
+                        dup_piece = piece.copy(piece.color, dup_board, move, piece.symbol)
+                    
+                        r1, c1 = piece.pos
+                        r2, c2 = move
 
-        viable_moves = []
+                        dup_board.rows[r2][c2] = dup_piece
+                        dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
 
-        #If amount of pieces checking you == 2 or higher AND valid is empty
-        #simply return checkmated.
-        if checking_pieces.length > 1
-            return viable_moves
-
-        #If amount of pieces checking you == 1
-        #Simply see if any of ur other pieces can kill OFF that piece.
-        #If so, then u are not checkmated.
-        else
-            to_kill = checking_pieces.pop
-            @rows.each do | row |
-                row.each do | piece |
-                    if piece.color == king.color && piece.symbol != king.symbol
-                        viable_moves << [piece.pos, to_kill.pos] if piece?(piece.pos) && piece.get_moves.include?(to_kill.pos)
+                        blocking_moves << [[r1, c1], move] unless dup_board.check(king.pos)
                     end
                 end
             end
         end
 
-        puts "Not yet checkmated, possible moves kill checker: #{viable_moves}" unless viable_moves.empty?
-        return viable_moves
+        puts "Not yet checkmated, possible moves that will block/capture checker: #{blocking_moves}" unless blocking_moves.empty?
+        blocking_moves
     end
+
 
     def checkmate_exit(king)
         valid_moves, _ = check_king_exits(king)
+        puts "Not yet checkmated, possible moves by the king to avoid check: #{valid_moves}" unless valid_moves.empty?
+        valid_moves += check_king_guards(king)
+        puts
+        puts "=================================================================================="
+        puts
+        puts "Not yet checkmated, all possible moves (including all above): #{valid_moves}" unless valid_moves.empty?
+        valid_moves
 
-        #Gotta implement block pieces for the king before doing rescue
-
-        if valid_moves.empty?
-            return check_king_rescue(king)
-        else
-            valid_moves += check_king_rescue(king)
-            puts "Not yet checkmated, possible moves: #{valid_moves}"
-            return valid_moves
-        end
     end
 
     def stalemate(color)

@@ -59,7 +59,6 @@ module Simulation
             [[7,1], [5,2]],
             [[7,0], [4,3]]
         ]
-
         simulate_intro.each do | start, dest = sub_arr |
             board.move_piece(start, dest)
         end
@@ -72,6 +71,25 @@ module Simulation
 
     #Test 3.5
     #Another simulation to show that you can block to protect the king in check
+    def simulation_4(board)
+        simulate_intro = [
+            [[1,3], [2,3]], 
+            [[2,3], [3,3]], 
+            [[6,3], [5,3]], 
+            [[5,3], [4,3]],
+            [[0,3], [2,3]],
+            [[2,3], [4,1]],
+            [[4,1], [4,3]],
+            [[4,3], [7,3]],
+            [[7,1], [5,2]],
+            [[7,0], [4,3]],
+            [[7,3], [5,2]]
+
+        ]
+        simulate_intro.each do | start, dest = sub_arr |
+            board.move_piece(start, dest)
+        end
+    end
 
     #Test 4: After castling create a check
 

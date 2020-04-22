@@ -9,6 +9,12 @@ class SlidingPiece < Piece
         super
     end
 
+    def copy(c, b, p, s)
+        copy_piece = SlidingPiece.new(c, b, p)
+        copy_piece.set_symbol(s)
+        copy_piece
+    end
+
     def set_symbol(s)
         @symbol = s
     end
@@ -21,9 +27,9 @@ class SlidingPiece < Piece
     def get_unblocked_moves(direction)
         result = []
         direction.each do | pos |
-            if piece?(pos) #If its a piece, then stop tracks here for this direction.
+            if piece?(pos)
                 x, y = pos
-                result << pos if @color != @board.rows[x][y].color #Don't put position if same color
+                result << pos if @color != @board.rows[x][y].color
                 break
             else
                 result << pos

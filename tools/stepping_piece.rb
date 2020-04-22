@@ -9,7 +9,7 @@ class SteppingPiece < Piece
         super
     end
 
-    def copy_king(c, b, p, s)
+    def copy(c, b, p, s)
         copy_piece = SteppingPiece.new(c, b, p)
         copy_piece.set_symbol(s)
         copy_piece
@@ -41,7 +41,7 @@ class SteppingPiece < Piece
         #       King = [7, 6] Rook = [7, 5]
         #
         
-        puts "Hi"
+        puts "Castle"
     end
 
     def set_symbol(s)
