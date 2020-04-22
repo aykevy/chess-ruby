@@ -65,6 +65,14 @@ module Simulation
         end
     end
 
+    #Test 3.4
+    #Another simulation with just two kings left and a pawn. This is to remove the
+    #king shit
+
+
+    #Test 3.5
+    #Another simulation to show that you can block to protect the king in check
+
     #Test 4: After castling create a check
 
     #Test 5: After castling checkmate the other king

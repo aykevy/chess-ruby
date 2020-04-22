@@ -53,17 +53,17 @@ class Board
     end
 
     def check_king_exits(king)
+        #The purpose of this function is to find moves and destinations for the king to go to
+        #that would not put them in check including pieces.
 
-        #Possible exits works even with 2 checks if u can catch one of them at least without getting
-        #checked and also just moving to a spot without anything checking you.
+        #TO SELF: MAKE EDGE CASE TO CHECK KING EXIT POSSIBLY ATTACKING A KING POSITION
 
-        valid = [] #Actual Moves [[[],[]]] #start_piece captures destination_piece
-        invalid = [] #Invalid Positions [[]] #destination_pieces that cant be moved to.
+        valid = []          #Actual Moves [[start_pos, dest_pos]] 
+        invalid_des = []    #Invalid Destinations [dest_pos]
 
         moves = king.get_moves
         moves.each_with_index do | move, idx |
-            
-            #puts "Possible Valid/Unvalid Move #{idx + 1}"
+
             dup_board = copy
             dup_piece = king.copy_king(king.color, dup_board, move, king.symbol)
 
@@ -72,14 +72,15 @@ class Board
 
             dup_board.rows[r2][c2] = dup_piece
             dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
+            dup_board.check(move) ? invalid_des << move : valid << [[r1, c1], move]
 
-            dup_board.check(move) ? invalid << move : valid << [[r1, c1], move]
-            #print_board(dup_board.rows)
         end
-        [valid, invalid]
+        [valid, invalid_des]
     end
 
-    def check_king_rescue(invalid_moves, king)
+    def check_king_rescue(king)
+        #The purpose of this function is to check if there are any pieces that can capture
+        #the attacking piece that is currently checking the king.
 
         checking_pieces = []
 
@@ -91,15 +92,14 @@ class Board
 
         viable_moves = []
 
-        #if amount of pieces checking you == 2 or higher AND valid is empty
-        # simply return checkmated.
+        #If amount of pieces checking you == 2 or higher AND valid is empty
+        #simply return checkmated.
         if checking_pieces.length > 1
-            puts "Checkmated"
             return viable_moves
 
-        #if amount of pieces checking you == 1
-        # simply see if any of ur other pieces can kill OFF that piece
-        # if so, then u are not checkmated.
+        #If amount of pieces checking you == 1
+        #Simply see if any of ur other pieces can kill OFF that piece.
+        #If so, then u are not checkmated.
         else
             to_kill = checking_pieces.pop
             @rows.each do | row |
@@ -111,43 +111,33 @@ class Board
             end
         end
 
-        if viable_moves.empty?
-            puts "Checkmated"
-            return viable_moves
-        else
-            puts "Not yet checkmated, possible moves kill checker: #{viable_moves}"
-            return viable_moves
-        end
+        puts "Not yet checkmated, possible moves kill checker: #{viable_moves}" unless viable_moves.empty?
+        return viable_moves
     end
 
     def checkmate_exit(king)
-        valid_action, invalid_action = check_king_exits(king)
-        #puts "Valid: #{valid_action}"
-        #puts "Invalid: #{invalid_action}"
+        valid_moves, _ = check_king_exits(king)
 
-        if valid_action.empty? #No moves from the king
-            return check_king_rescue(invalid_action, king)
+        #Gotta implement block pieces for the king before doing rescue
+
+        if valid_moves.empty?
+            return check_king_rescue(king)
         else
-            valid_action += check_king_rescue(invalid_action, king)
-            puts "Not yet checkmated, possible moves: #{valid_action}"
-
-            return valid_action
+            valid_moves += check_king_rescue(king)
+            puts "Not yet checkmated, possible moves: #{valid_moves}"
+            return valid_moves
         end
     end
 
     def stalemate(color)
         puts "Stalemate"
-        #If the kings moves are all invalid (moves would put them in check)
-        #If all the pieces of the color has no valid moves
-        #Most importantly, the king is not in check
-        #Then it is stalemate.
     end
 
     def valid_move?(start, dest)
         x, y = start
         valid_moves = @rows[x][y].get_moves
         puts
-        print valid_moves
+        print "Valid destinations: #{valid_moves}"
         puts
         valid_moves.include?(dest)
     end
@@ -177,9 +167,6 @@ class Board
             @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
         end
         @rows[r2][c2].set_symbol(piece_type)
-
-        #-----Testing Here-----
-        #print_board(@rows)
-
+        
     end
 end

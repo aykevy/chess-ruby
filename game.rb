@@ -10,7 +10,6 @@ class Game
 
     def initialize
         @board = Board.new()
-        print_board(@board.rows)
     end
 
     def get_kings
@@ -39,9 +38,9 @@ class Game
         puts "Please choose a the destination: "
         destination = gets.chomp.split(",")
         d = destination.map(&:to_i)
-        [s, d]
         puts
         puts
+        [s, d] #putting puts after returns [nil, nil]
     end
     
     def play
@@ -62,7 +61,7 @@ class Game
                 puts "White king in check."
                 check_exits = @board.checkmate_exit(white_king)
                 if check_exits.empty?
-                    puts "Black wins!"
+                    puts "Checkmate. Black wins!"
                     break
                 else
                     white_exit_moves = check_exits
@@ -74,7 +73,7 @@ class Game
                 puts "Black king in check."
                 check_exits2 = @board.checkmate_exit(black_king)
                 if check_exits2.empty?
-                    puts "White wins!"
+                    puts "Checkmate. White wins!"
                     break
                 else
                     black_exit_moves = check_exits2
@@ -88,15 +87,43 @@ class Game
 
             #Make a 2nd option here, if in check, go to check list for valid
 
-            if in_check_white || in_check_black
-                puts "===ERROR: MUST REMOVE CHECK!==="
+            if in_check_white
+                #print white_exit_moves
+                #print [s, d]
+                puts "===ERROR: MUST REMOVE CHECK WHITE!==="
+                if white_exit_moves.include?([s, d])
+                    
+                    puts "VALID MOVE!"
+                    puts
+                    @board.move_piece(s, d)
+                else
+                    puts "INVALID MOVE!"
+                    puts
+                end
+
+            elsif in_check_black
+                puts "===ERROR: MUST REMOVE CHECK BLACK!==="
+                if black_exit_moves.include?([s, d])
+                    puts "VALID MOVE!"
+                    puts
+                    @board.move_piece(s, d)
+                else
+                    puts "INVALID MOVE!"
+                    puts
+                end
+
+            elsif !@board.piece?(s)
+                puts "INVALID MOVE! (That is not a piece you selected)"
+                puts
 
             else
                 if @board.valid_move?(s, d) && !is_king?(d) #test this
                     puts "VALID MOVE!"
+                    puts
                     @board.move_piece(s, d)
                 else
                     puts "INVALID MOVE!"
+                    puts
                 end
             end
         end
