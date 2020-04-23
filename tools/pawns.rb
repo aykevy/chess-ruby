@@ -2,8 +2,12 @@ require_relative "piece"
 
 class Pawn < Piece
 
+    attr_accessor :can_enpassant, :moved
     def initialize(color, board, pos)
         super
+        @can_enpassant = false
+        @can_castle = true
+        @moved = false
     end
 
     def copy(c, b, p, s)

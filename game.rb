@@ -82,6 +82,11 @@ class Game
             print_board(@board.rows)
 
             white_king, black_king = self.get_kings
+            puts "Castling Marker"
+            puts "White Castle Moves: #{white_king.castle}"
+            puts "Black Castle Moves: #{black_king.castle}"
+            puts
+
             in_check_white, in_check_black = false, false
             white_exit_moves, black_exit_moves = [], []
 

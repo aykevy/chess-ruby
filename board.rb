@@ -150,6 +150,7 @@ class Board
             @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
         end
         @rows[r2][c2].set_symbol(piece_type)
+        @rows[r2][c2].moved = true
         
     end
 end

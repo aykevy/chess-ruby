@@ -5,8 +5,12 @@ class SlidingPiece < Piece
 
     include Slideable
 
+    attr_accessor :can_castle, :moved
+
     def initialize(color, board, pos)
         super
+        @can_castle = true
+        @moved = false
     end
 
     def copy(c, b, p, s)
