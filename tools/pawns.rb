@@ -26,12 +26,6 @@ class Pawn < Piece
         @board.rows[x][y].color != @color
     end
 
-    def promotion
-
-        puts "Promotion"
-        
-    end
-
     def enpassant
         #This rule only applies when there are adjacent pawns of the opposite color and they have
         #chosen to do the two step forward move.

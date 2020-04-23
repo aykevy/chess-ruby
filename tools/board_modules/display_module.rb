@@ -32,4 +32,11 @@ module Display
         puts
     end
 
+    def print_moves(moves)
+        moves.each do | move |
+            start, des = move
+            puts "#{start} -> #{des} "
+        end
+    end
+
 end

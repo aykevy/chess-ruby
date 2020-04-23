@@ -75,7 +75,7 @@ class Game
 
     def play
 
-        simulation_4(@board)
+        #simulation_4(@board)
 
         while true
 
@@ -140,7 +140,7 @@ class Game
                 end
 
             elsif !@board.piece?(s)
-                puts "INVALID MOVE! (That is not a piece you selected)"
+                puts "INVALID MOVE! (That is not a piece)"
                 puts
 
             else

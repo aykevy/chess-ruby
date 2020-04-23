@@ -1,3 +1,7 @@
+#This module gets you all the positions of every direction on the board
+#relative to the piece. It does not check for valid or invalid positions, it simply
+#returns all possible placements on the board for bishops, rooks, and queens.
+
 module Slideable
 
     def top_left_diagonal(pos)

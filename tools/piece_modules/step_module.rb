@@ -1,11 +1,16 @@
+#This module gets you all the positions of every direction on the board
+#relative to the piece. It does not check for valid or invalid positions, it simply
+#returns all possible placements on the board for knights and kings.
+
 module Stepable
 
     def moves(pos, symbol)
         x, y = pos
         directions = []
-        if symbol == :knight
+        case symbol
+        when :knight
             directions = [[-1, -2], [-2, -1], [-2, 1], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]
-        else
+        when :king
             directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
         end
         positions = directions.map { | row, col = move | [row + x, col + y] }
