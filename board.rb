@@ -42,12 +42,6 @@ class Board
         @rows[x][y].is_a?(Piece) && !@rows[x][y].is_a?(NullPiece)
     end
 
-    #Will check if the given position is of the opposite color.
-    def opposite_color?(pos)
-        x, y = pos
-        @board.rows[x][y].color != @color
-    end
-
     #Will check if the given position is in check.
     def check(pos)
         @rows.each do | row |

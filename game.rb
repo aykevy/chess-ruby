@@ -30,6 +30,32 @@ class Game
         @board.rows[row][col].symbol == :king
     end
 
+    def do_castle(king_pos, king_dest)
+        case king_dest
+        when [7, 2]
+            rook_start, rook_dest = [[7, 0], [7, 3]]
+            @board.move_piece(king_pos, king_dest)
+            @board.move_piece(rook_start, rook_dest)
+
+        when [7, 6]
+            rook_start, rook_dest = [[7, 7], [7, 5]]
+            @board.move_piece(king_pos, king_dest)
+            @board.move_piece(rook_start, rook_dest)
+
+        when [0, 2]
+            rook_start, rook_dest = [[0, 0], [0, 3]]
+            @board.move_piece(king_pos, king_dest)
+            @board.move_piece(rook_start, rook_dest)
+
+        when [0, 6]
+            rook_start, rook_dest = [[0, 7], [0, 5]]
+            @board.move_piece(king_pos, king_dest)
+            @board.move_piece(rook_start, rook_dest)
+        end
+
+
+    end
+
     def prompt_move
         puts
         puts "Please choose a piece to move: "
@@ -79,16 +105,13 @@ class Game
 
         while true
 
-            print_board(@board.rows)
-
             white_king, black_king = self.get_kings
-            puts "Castling Marker"
-            puts "White Castle Moves: #{white_king.castle}"
-            puts "Black Castle Moves: #{black_king.castle}"
-            puts
-
+            white_castle_moves, black_castle_moves = white_king.castle, black_king.castle
             in_check_white, in_check_black = false, false
             white_exit_moves, black_exit_moves = [], []
+            
+            print_castle_moves(white_castle_moves, black_castle_moves)
+            print_board(@board.rows)
 
             #Test For King Capture Incase for Both
             #--------------------------------------
@@ -148,14 +171,53 @@ class Game
                 puts "INVALID MOVE! (That is not a piece)"
                 puts
 
+
+            #REGULAR MOVES HERE.
+
             else
-                if @board.valid_move?(s, d) && !is_king?(d) #test this
-                    puts "VALID MOVE!"
-                    puts
-                    @board.move_piece(s, d)
+
+                if is_king?(s) && @board.rows[s[0]][s[1]].color == :white
+
+                    if @board.valid_move?(s, d) || white_castle_moves.include?(d)
+
+                        if white_castle_moves.include?(d)
+                            puts "VALID CASTLE MOVE!"
+                            puts
+                            do_castle(s, d)
+                        else
+                            puts "VALID MOVE!"
+                            puts
+                            @board.move_piece(s, d)
+                        end
+                    end
+                        
+
+                elsif is_king?(s) && @board.rows[s[0]][s[1]].color == :black
+
+                    if @board.valid_move?(s, d) || black_castle_moves.include?(d)
+
+                        if black_castle_moves.include?(d)
+                            puts "VALID CASTLE MOVE!"
+                            puts
+                            do_castle(s, d)
+                        else
+                            puts "VALID MOVE!"
+                            puts
+                            @board.move_piece(s, d)
+                        end
+                    end
+
+
                 else
-                    puts "INVALID MOVE!"
-                    puts
+                    if @board.valid_move?(s, d)
+                        puts "VALID MOVE!"
+                        puts
+                        @board.move_piece(s, d)
+                    else
+                        puts "INVALID MOVE!"
+                        puts
+                    end
+
                 end
             end
 

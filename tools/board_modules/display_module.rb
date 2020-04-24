@@ -8,6 +8,8 @@ module Display
     #Black pieces are denoted by $
     #P = Pawn, R = Rook, B = Bishop, N = Knight, Q = Queen, K = King
     def print_board(board_rows)
+        puts "============The Board============"
+        puts
         puts "   0   1   2   3   4   5   6   7 "
         puts "---------------------------------"
         board_rows.each_with_index do | sub_arr, idx |
@@ -45,6 +47,23 @@ module Display
             start, des = move
             puts "#{start} -> #{des} "
         end
+    end
+
+    def print_castle_moves(white_castle_moves, black_castle_moves)
+        puts "==========Castle Tracker=========="
+        puts
+        if white_castle_moves.empty?
+            puts "White Castle Moves: None"
+        else
+            puts "White Castle Moves: #{white_castle_moves}"
+        end
+
+        if black_castle_moves.empty?
+            puts "Black Castle Moves: None"
+        else
+            puts "Black Castle Moves: #{black_castle_moves}"
+        end
+        puts
     end
 
 end
