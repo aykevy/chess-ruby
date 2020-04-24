@@ -93,17 +93,15 @@ class SteppingPiece < Piece
             king_side = [[0, 5], [0, 6]]
             castle_spots << [0, 2] if queen_side.all? { | pos | !piece?(pos) }
             castle_spots << [0, 6] if king_side.all? { | pos | !piece?(pos) }
-            #Add a check to see if kign and rook spots are pieces
         end
 
         #This section checks if the rooks and kings have not moved.
+        #Also checks for symbol because maybe the spot is nullpiece.
         can_castle = castle_spots.select do | spot |
             case spot
             when [7, 2]
-                #Add a check to see if kign and rook spots are pieces
                 rook = @board.rows[7][0]
                 king = @board.rows[7][4]
-                #Check for symbol because maybe the spot is nullpiece.
                 rook.symbol == :rook && king.symbol == :king && !rook.moved && !king.moved
             when [7, 6]
                 rook = @board.rows[7][7]
@@ -122,10 +120,6 @@ class SteppingPiece < Piece
 
         #This section checks if there are no pieces of opposite color attacking the
         #empty spaces where the kings and rooks can move
-        
-        #final_list = no_attacks_on_castle_paths(can_castle)
-        #print "Piece: #{@pos}, Castle List: #{final_list}\n" unless final_list.empty?
-
         no_checks_currently ? no_attacks_on_castle_paths(can_castle) : []
     end
 

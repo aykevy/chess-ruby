@@ -101,7 +101,7 @@ class Game
 
     def play
 
-        #simulation_4(@board)
+        simulation_7(@board)
 
         while true
 
@@ -138,16 +138,12 @@ class Game
                     in_check_black = true
                 end
             end
-
             #--------------------------------------
 
             s, d = prompt_move
 
-            #Make a 2nd option here, if in check, go to check list for valid
-
+            #Avoid check moves are made here.
             if in_check_white
-                #print white_exit_moves
-                #print [s, d]
                 if white_exit_moves.include?([s, d])
                     puts "VALID MOVE!"
                     puts
@@ -167,19 +163,15 @@ class Game
                     puts
                 end
 
+            #Before moving on, check if its a piece in the first place.
             elsif !@board.piece?(s)
                 puts "INVALID MOVE! (That is not a piece)"
                 puts
 
-
-            #REGULAR MOVES HERE.
-
+            #Regular or special moves are made here.
             else
-
                 if is_king?(s) && @board.rows[s[0]][s[1]].color == :white
-
                     if @board.valid_move?(s, d) || white_castle_moves.include?(d)
-
                         if white_castle_moves.include?(d)
                             puts "VALID CASTLE MOVE!"
                             puts
@@ -191,11 +183,8 @@ class Game
                         end
                     end
                         
-
                 elsif is_king?(s) && @board.rows[s[0]][s[1]].color == :black
-
                     if @board.valid_move?(s, d) || black_castle_moves.include?(d)
-
                         if black_castle_moves.include?(d)
                             puts "VALID CASTLE MOVE!"
                             puts
@@ -207,7 +196,6 @@ class Game
                         end
                     end
 
-
                 else
                     if @board.valid_move?(s, d)
                         puts "VALID MOVE!"
@@ -217,8 +205,8 @@ class Game
                         puts "INVALID MOVE!"
                         puts
                     end
-
                 end
+
             end
 
         end

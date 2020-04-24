@@ -134,9 +134,10 @@ class Board
     def valid_move?(start, dest)
         x, y = start
         valid_moves = @rows[x][y].get_moves
-        puts
-        print "Valid destinations: #{valid_moves}"
-        puts
+        #Uncomment if you want to see where the valid destinations are for a move.
+        #puts
+        #print "Valid destinations: #{valid_moves}"
+        #puts
         valid_moves.include?(dest)
     end
 

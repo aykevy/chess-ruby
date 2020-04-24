@@ -62,7 +62,6 @@ module Simulation
         end
     end
 
-
     #Test 3.5
     #Another simulation to show that you can block to protect the king in check
     def simulation_5(board)
@@ -79,7 +78,41 @@ module Simulation
 
     #EDGE CASE: ENPASSANT TO ADD TO CHECKS FOR CHECKING THE KING
 
+    #Test 3.6 Castling
+    def simulation_6(board)
+        simulate_intro = [
+            [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
+            [[7, 1], [5, 0]], [[7, 2], [6, 1]], [[7, 3], [6, 3]],
+            [[1, 3], [3, 3]], [[6, 4], [4, 4]], [[0, 3], [2, 3]],
+            [[2, 3], [4, 5]], [[4, 5], [5, 4]], [[7, 5], [6, 4]],
+            [[7, 6], [5, 7]]
+        ]
+        simulate_intro.each do | start, dest = sub_arr |
+            board.move_piece(start, dest)
+        end
+    end
+
+    #Test 3.7 Castling works if theres a piece checking through a pathway where
+    #the king is not passing through, this is the edge case for where there are
+    #three empty spaces between king and rook on the left of the board. The most
+    #left empty space does not have to check for checks as only the rook will 
+    #pass through it.
+    def simulation_7(board)
+        simulate_intro = [
+            [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
+            [[7, 1], [5, 0]], [[7, 2], [6, 1]], [[7, 3], [6, 3]],
+            [[1, 3], [3, 3]], [[6, 4], [4, 4]], [[0, 3], [2, 3]],
+            [[2, 3], [4, 5]], [[4, 5], [5, 4]], [[7, 5], [6, 4]],
+            [[7, 6], [5, 7]], [[5, 4], [5, 3]], [[5, 3], [5, 2]],
+            [[5, 2], [5, 1]], [[5, 1], [6, 1]], [[6, 1], [3, 1]]
+        ]
+        simulate_intro.each do | start, dest = sub_arr |
+            board.move_piece(start, dest)
+        end
+    end
+
     #Test 4: After castling create a check
+
 
     #Test 5: After castling checkmate the other king
 
