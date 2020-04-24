@@ -9,7 +9,6 @@ class SlidingPiece < Piece
 
     def initialize(color, board, pos)
         super
-        @can_castle = true
         @moved = false
     end
 

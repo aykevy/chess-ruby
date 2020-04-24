@@ -6,7 +6,6 @@ class Pawn < Piece
     def initialize(color, board, pos)
         super
         @can_enpassant = false
-        @can_castle = true
         @moved = false
     end
 

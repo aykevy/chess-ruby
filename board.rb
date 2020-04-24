@@ -19,28 +19,36 @@ class Board
         setup_board(@rows, self)
     end
 
+    #Creates a copy of the board by creating a new board instance and passing
+    #a set of moves for the duplicate to simulate and be up to date with the
+    #current board.
     def copy
         dup_board = Board.new()
         dup_board.simulate(@moves_list)
         dup_board
     end
 
+    #When given a list, the function will move all the pieces in order as given.
     def simulate(moves_list)
         moves_list.each do | start, dest = sub_arr |
             move_piece(start, dest)
         end
     end
 
+    #Will check if the current position is part of the piece class and check if
+    #it's also not part of the nullpiece class.
     def piece?(pos)
         x, y = pos
         @rows[x][y].is_a?(Piece) && !@rows[x][y].is_a?(NullPiece)
     end
 
+    #Will check if the given position is of the opposite color.
     def opposite_color?(pos)
         x, y = pos
         @board.rows[x][y].color != @color
     end
 
+    #Will check if the given position is in check.
     def check(pos)
         @rows.each do | row |
             row.each do | piece |
@@ -52,6 +60,9 @@ class Board
         false
     end
 
+    #Helper function. Will check if the given piece has any valid moves. The
+    #checking position is temporary and is useful for checking if the movement
+    #of the piece will cause that position to be in check. 
     def check_valid_moves(piece, checking_pos = nil)
 
         valid = [] #[ [[start_row, start_col], [dest_row, dest_col]] ] 
@@ -77,22 +88,24 @@ class Board
         valid
     end
 
-
+    #This function checks if the king can move away to a safe position or can
+    #capture a position through the king's movements and returns a set of valid
+    #moves.
     def check_king_exits(king)
         valid = check_valid_moves(king)
-
         unless valid.empty?
             puts "Not yet checkmated, possible moves by the king to avoid check: \n"
             print_moves(valid)
         end
-
         puts
         valid
     end
 
+    #This function checks if the king can be protected by other pieces from check
+    #using the ones that are the king's color. This will return a set of valid moves
+    #that will either block the king from being in check or capture the checking piece.
     def check_king_guards(king)
         valid = []
-
         @rows.each do | row |
             row.each do | piece |
                 if piece?(piece.pos) && piece.color == king.color
@@ -100,16 +113,16 @@ class Board
                 end
             end
         end
-
         unless valid.empty?
             puts "Not yet checkmated, possible moves that will block/capture checker: \n"
             print_moves(valid)
         end
-
         puts
         valid
     end
 
+    #This function returns all of the possible moves when the king is in check. If
+    #the moves returned is empty, then it is checkmate for the king.
     def checkmate_exit(king)
         valid_moves = check_king_exits(king)
         valid_moves += check_king_guards(king)
@@ -132,6 +145,7 @@ class Board
     end
 
     def move_piece(start_pos, end_pos)
+
         moves_list << [start_pos, end_pos]
         r1, c1 = start_pos
         r2, c2 = end_pos

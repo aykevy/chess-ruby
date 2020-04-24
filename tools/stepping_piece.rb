@@ -9,7 +9,6 @@ class SteppingPiece < Piece
 
     def initialize(color, board, pos)
         super
-        @can_castle = true
         @moved = false
     end
 
@@ -19,7 +18,13 @@ class SteppingPiece < Piece
         copy_piece
     end
 
+    def no_checks_currently
+        #This will check if the current king is under in check mode.
+        @board.check(@pos) == false
+    end
+
     def check_not_attacked(to_check)
+        #Helper function.
         opp_color = @color == :white ? :black : :white
         to_check.select do | emptied_pos |
             can_use = true
@@ -40,7 +45,9 @@ class SteppingPiece < Piece
             case king_pos
 
             when [7, 2]
-                to_check = [[7, 1], [7, 2], [7, 3]]
+                #Not [7, 1] because the king is not moving through there when
+                #it is castling.
+                to_check = [[7, 2], [7, 3]]
                 unattacked = check_not_attacked(to_check)
                 to_check.length == unattacked.length
 
@@ -50,7 +57,9 @@ class SteppingPiece < Piece
                 to_check.length == unattacked.length
 
             when [0, 2]
-                to_check = [[0, 1], [0, 2], [0, 3]]
+                #Not [0, 1] because the king is not moving through there when
+                #it is castling.
+                to_check = [[0, 2], [0, 3]]
                 unattacked = check_not_attacked(to_check)
                 to_check.length == unattacked.length
 
@@ -61,16 +70,6 @@ class SteppingPiece < Piece
             end
         
         end
-
-    end
-
-    def no_checks_currently
-        #This will check if the current king is under in check mode.
-
-    end
-
-    def passed_all_castle_rules
-        #This will check if all rules pass
 
     end
 
@@ -94,27 +93,29 @@ class SteppingPiece < Piece
             king_side = [[0, 5], [0, 6]]
             castle_spots << [0, 2] if queen_side.all? { | pos | !piece?(pos) }
             castle_spots << [0, 6] if king_side.all? { | pos | !piece?(pos) }
+            #Add a check to see if kign and rook spots are pieces
         end
 
         #This section checks if the rooks and kings have not moved.
         can_castle = castle_spots.select do | spot |
             case spot
             when [7, 2]
+                #Add a check to see if kign and rook spots are pieces
                 rook = @board.rows[7][0]
                 king = @board.rows[7][4]
-                rook.can_castle && king.can_castle && !rook.moved && !king.moved
+                !rook.moved && !king.moved
             when [7, 6]
                 rook = @board.rows[7][7]
                 king = @board.rows[7][4]
-                rook.can_castle && king.can_castle && !rook.moved && !king.moved
+                !rook.moved && !king.moved
             when [0, 2]
                 rook = @board.rows[0][0]
                 king = @board.rows[0][4]
-                rook.can_castle && king.can_castle && !rook.moved && !king.moved
+                !rook.moved && !king.moved
             when [0, 6]
                 rook = @board.rows[0][7]
                 king = @board.rows[0][4]
-                rook.can_castle && king.can_castle && !rook.moved && !king.moved
+                !rook.moved && !king.moved
             end
         end
 
@@ -123,7 +124,8 @@ class SteppingPiece < Piece
         
         #final_list = no_attacks_on_castle_paths(can_castle)
         #print "Piece: #{@pos}, Castle List: #{final_list}\n" unless final_list.empty?
-        no_attacks_on_castle_paths(can_castle)
+
+        no_checks_currently ? no_attacks_on_castle_paths(can_castle) : []
     end
 
     def set_symbol(s)
