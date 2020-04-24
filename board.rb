@@ -30,8 +30,14 @@ class Board
 
     #When given a list, the function will move all the pieces in order as given.
     def simulate(moves_list)
-        moves_list.each do | start, dest = sub_arr |
-            move_piece(start, dest)
+        moves_list.each do | sub_arr |
+            if sub_arr.length == 2
+                start, dest = sub_arr
+                move_piece(start, dest)
+            else
+                start, dest, promo = sub_arr
+                move_piece(start, dest, promo)
+            end
         end
     end
 
@@ -135,33 +141,68 @@ class Board
         x, y = start
         valid_moves = @rows[x][y].get_moves
         #Uncomment if you want to see where the valid destinations are for a move.
-        #puts
-        #print "Valid destinations: #{valid_moves}"
-        #puts
+        puts
+        print "Valid destinations: #{valid_moves}"
+        puts
         valid_moves.include?(dest)
     end
 
-    def move_piece(start_pos, end_pos)
+    def move_piece(start_pos, end_pos, promotion = nil)
 
-        moves_list << [start_pos, end_pos]
-        r1, c1 = start_pos
-        r2, c2 = end_pos
+        if promotion.nil?
+            moves_list << [start_pos, end_pos]
+            r1, c1 = start_pos
+            r2, c2 = end_pos
 
-        piece_color = @rows[r1][c1].color
-        piece_type = @rows[r1][c1].symbol
+            piece_color = @rows[r1][c1].color
+            piece_type = @rows[r1][c1].symbol
 
-        @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
+            @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
 
-        case piece_type
-        when :pawn
-            @rows[r2][c2] = Pawn.new(piece_color, self, [r2, c2])
-        when :rook, :bishop, :queen
-            @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
-        when :knight, :king
-            @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
+            case piece_type
+            when :pawn
+                @rows[r2][c2] = Pawn.new(piece_color, self, [r2, c2])
+            when :rook, :bishop, :queen
+                @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
+            when :knight, :king
+                @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
+            end
+            @rows[r2][c2].set_symbol(piece_type)
+            @rows[r2][c2].moved = true
+        else
+
+            moves_list << [start_pos, end_pos, promotion]
+
+            r1, c1 = start_pos
+            r2, c2 = end_pos
+            piece_color, desired_promo = promotion
+
+            @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
+
+            case desired_promo
+
+            when "q"
+                @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
+                @rows[r2][c2].set_symbol(:queen)
+                @rows[r2][c2].moved = true
+
+            when "r"
+                @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
+                @rows[r2][c2].set_symbol(:rook)
+                @rows[r2][c2].moved = true 
+
+            when "b"
+                @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
+                @rows[r2][c2].set_symbol(:bishop)
+                @rows[r2][c2].moved = true 
+
+            when "n"
+                @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
+                @rows[r2][c2].set_symbol(:knight)
+                @rows[r2][c2].moved = true 
+            end
         end
-        @rows[r2][c2].set_symbol(piece_type)
-        @rows[r2][c2].moved = true
+
         
     end
 end

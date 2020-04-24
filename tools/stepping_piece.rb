@@ -38,37 +38,29 @@ class SteppingPiece < Piece
     end
 
     def no_attacks_on_castle_paths(castle_list)
-        #This will satisfy the rule of checking if you'll be in check after
-        #castling or if any of the pathways is currently under attack.
-
         castle_list.select do | king_pos |
             case king_pos
-
             when [7, 2]
                 #Not [7, 1] because the king is not moving through there when
                 #it is castling.
                 to_check = [[7, 2], [7, 3]]
                 unattacked = check_not_attacked(to_check)
                 to_check.length == unattacked.length
-
             when [7, 6]
                 to_check = [[7, 5], [7, 6]]
                 unattacked = check_not_attacked(to_check)
                 to_check.length == unattacked.length
-
             when [0, 2]
                 #Not [0, 1] because the king is not moving through there when
                 #it is castling.
                 to_check = [[0, 2], [0, 3]]
                 unattacked = check_not_attacked(to_check)
                 to_check.length == unattacked.length
-
             when [0, 6]
                 to_check = [[0, 5], [0, 6]]
                 unattacked = check_not_attacked(to_check)
                 to_check.length == unattacked.length
             end
-        
         end
 
     end
@@ -87,7 +79,6 @@ class SteppingPiece < Piece
             king_side = [[7, 5], [7, 6]]
             castle_spots << [7, 2] if queen_side.all? { | pos | !piece?(pos) }
             castle_spots << [7, 6] if king_side.all? { | pos | !piece?(pos) }
-
         when :black
             queen_side = [[0, 1], [0, 2], [0, 3]]
             king_side = [[0, 5], [0, 6]]

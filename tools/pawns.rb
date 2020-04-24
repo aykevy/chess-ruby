@@ -1,6 +1,8 @@
 require_relative "piece"
+require_relative "board_modules/display_module"
 
 class Pawn < Piece
+    include Display
 
     attr_accessor :can_enpassant, :moved
     def initialize(color, board, pos)
@@ -68,7 +70,7 @@ class Pawn < Piece
             valid << forward
             valid += two_step_forward #If you can't move forward one time obviously you can't move two forward.
         end
-
+    
         #Checks for opposite color pieces in diagonals.
         bounded_moves.each { | pos | valid << pos if piece?(pos) && opposite_color?(pos) }
         valid 
