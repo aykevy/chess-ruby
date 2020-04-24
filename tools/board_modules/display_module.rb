@@ -1,5 +1,12 @@
+#This module is used for giving us a visual representation of the board
+#and any other piece of information that might be useful such as a moves list.
+
 module Display
     
+    #This function prints the current chess board.
+    #White pieces are denoted by *
+    #Black pieces are denoted by $
+    #P = Pawn, R = Rook, B = Bishop, N = Knight, Q = Queen, K = King
     def print_board(board_rows)
         puts "   0   1   2   3   4   5   6   7 "
         puts "---------------------------------"
@@ -32,6 +39,7 @@ module Display
         puts
     end
 
+    #Given a set of moves, this will print the move list in a start -> dest visual.
     def print_moves(moves)
         moves.each do | move |
             start, des = move

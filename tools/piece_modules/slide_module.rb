@@ -1,9 +1,11 @@
 #This module gets you all the positions of every direction on the board
-#relative to the piece. It does not check for valid or invalid positions, it simply
-#returns all possible placements on the board for bishops, rooks, and queens.
+#relative to the piece. It does not check for valid or invalid positions nor does
+#it check for blocked positions, it simply returns all possible placements on the 
+#board for bishops, rooks, and queens.
 
 module Slideable
 
+    #Gets you all positions from the given start position to the top left diagonally.
     def top_left_diagonal(pos)
         possible_moves = []
         x, y = pos
@@ -15,6 +17,7 @@ module Slideable
         possible_moves
     end
 
+    #Gets you all positions from the given start position to the top right diagonally.
     def top_right_diagonal(pos)
         possible_moves = []
         x, y = pos
@@ -26,6 +29,7 @@ module Slideable
         possible_moves
     end
 
+    #Gets you all positions from the given start position to the bottom left diagonally.
     def bottom_left_diagonal(pos)
         possible_moves = []
         x, y = pos
@@ -37,6 +41,7 @@ module Slideable
         possible_moves
     end
 
+    #Gets you all positions from the given start position to the bottom right diagonally.
     def bottom_right_diagonal(pos)
         possible_moves = []
         x, y = pos
@@ -48,6 +53,7 @@ module Slideable
         possible_moves
     end
 
+    #Gets you all positions from the given start position to the top vertically.
     def center_top(pos)
         possible_moves = []
         x, y = pos
@@ -58,6 +64,7 @@ module Slideable
         possible_moves
     end
 
+    #Gets you all positions from the given start position to the bottom vertically.
     def center_bottom(pos)
         possible_moves = []
         x, y = pos
@@ -68,6 +75,7 @@ module Slideable
         possible_moves
     end
 
+    #Gets you all positions from the given start position to the left horizontally.
     def center_left(pos)
         possible_moves = []
         x, y = pos
@@ -78,6 +86,7 @@ module Slideable
         possible_moves
     end
 
+    #Gets you all positions from the given start position to the right horizontally.
     def center_right(pos)
         possible_moves = []
         x, y = pos
@@ -88,6 +97,8 @@ module Slideable
         possible_moves
     end
 
+    #Gets you an array of directions that are arrays of all possible positions
+    #diagonally. Primarily used for bishops.
     def diagonal_moves(pos) 
         top_left = top_left_diagonal(pos)
         top_right = top_right_diagonal(pos)
@@ -96,6 +107,8 @@ module Slideable
         [top_left, top_right, bottom_left, bottom_right]
     end
 
+    #Gets you an array of directions that are arrays of all possible positions
+    #horizontally and vertically. Primarily used for rooks.
     def horizontal_vertical_moves(pos)
         top = center_top(pos)
         left = center_left(pos)
@@ -104,6 +117,8 @@ module Slideable
         [top, left, right, bottom]
     end
 
+    #Gets you an array of directions that are arrays of all possible positions
+    #diagonally, horizontally, and vertically. Primarily used for queens.
     def all_directions(pos)
         diagonal_moves(pos) + horizontal_vertical_moves(pos)
     end

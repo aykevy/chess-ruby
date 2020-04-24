@@ -61,8 +61,10 @@ class Board
     end
 
     #Helper function. Will check if the given piece has any valid moves. The
-    #checking position is temporary and is useful for checking if the movement
-    #of the piece will cause that position to be in check. 
+    #checking_pos is temporary and is useful for checking if the movement
+    #of the piece will cause that given checking_pos to be in check.
+    #Primarily though, you will only be using this function for the sake of
+    #seeing whether or not a move will affect the king.
     def check_valid_moves(piece, checking_pos = nil)
 
         valid = [] #[ [[start_row, start_col], [dest_row, dest_col]] ] 
