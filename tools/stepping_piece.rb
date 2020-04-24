@@ -5,7 +5,7 @@ class SteppingPiece < Piece
 
     include Stepable
 
-    attr_accessor :can_castle, :moved
+    attr_accessor :moved
 
     def initialize(color, board, pos)
         super
@@ -103,19 +103,20 @@ class SteppingPiece < Piece
                 #Add a check to see if kign and rook spots are pieces
                 rook = @board.rows[7][0]
                 king = @board.rows[7][4]
-                !rook.moved && !king.moved
+                #Check for symbol because maybe the spot is nullpiece.
+                rook.symbol == :rook && king.symbol == :king && !rook.moved && !king.moved
             when [7, 6]
                 rook = @board.rows[7][7]
                 king = @board.rows[7][4]
-                !rook.moved && !king.moved
+                rook.symbol == :rook && king.symbol == :king && !rook.moved && !king.moved
             when [0, 2]
                 rook = @board.rows[0][0]
                 king = @board.rows[0][4]
-                !rook.moved && !king.moved
+                rook.symbol == :rook && king.symbol == :king && !rook.moved && !king.moved
             when [0, 6]
                 rook = @board.rows[0][7]
                 king = @board.rows[0][4]
-                !rook.moved && !king.moved
+                rook.symbol == :rook && king.symbol == :king && !rook.moved && !king.moved
             end
         end
 

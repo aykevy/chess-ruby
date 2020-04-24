@@ -5,7 +5,7 @@ class SlidingPiece < Piece
 
     include Slideable
 
-    attr_accessor :can_castle, :moved
+    attr_accessor :moved
 
     def initialize(color, board, pos)
         super
