@@ -32,6 +32,13 @@ class Game
         [white, black]
     end
 
+    def king_info(king)
+        castle_moves = king.castle
+        in_check = false
+        exit_moves = []
+        [castle_moves, in_check, exit_moves]
+    end
+
     def is_king?(pos)
         row, col = pos
         @board.rows[row][col].symbol == :king
@@ -114,35 +121,28 @@ class Game
         end
     end
 
-    def king_info(king)
-        castle_moves = king.castle
-        in_check = false
-        exit_moves = []
-        [castle_moves, in_check, exit_moves]
-    end
-
+    #Case 1: If in check, return [true, check_exits]
+    #Case 2: If in checkmate, return ["Done"]
+    #Case 3: If in stalemate, return ["Done"]
     def checkmate_or_stalemate?(king)
         info_updates = []
         opposite_color = king.color == :white ? :black : :white
         if @board.check(king.pos)
-            puts "#{king.color} king in check. Resolve check first."
+            puts "Check, #{king.color} king in check. Resolve check first."
             check_exits = @board.checkmate_exit(king)
             if check_exits.empty?
-                puts "Checkmate. #{opposite_color} wins!"
+                puts "Checkmate, #{opposite_color} wins!"
                 info_updates << "Done"
             else
                 info_updates << true
                 info_updates << check_exits
             end
         elsif @board.stalemate(king.color)
-            puts "Stalemate, #{king.color} has no legal moves"
+            puts "Stalemate, #{king.color} has no legal moves."
             info_updates << "Done"
         else
             info_updates << "Continue"
         end
-        #Case 1: If in check, return this. #[true, check_exits]
-        #Case 2: If in checkmate, return this. #["Done"]
-        #Case 3: If in stalemate, return this. #["Done"]
         info_updates 
     end
 
@@ -151,31 +151,35 @@ class Game
         simulation_7(@board)
 
         while true
+
+            #Set up king informations on both sides
+            #--------------------------------------
             white_king, black_king = self.get_kings
             white_castle_moves, in_check_white, white_exit_moves = king_info(white_king)
             black_castle_moves, in_check_black, black_exit_moves = king_info(black_king)
             print_castle_moves(white_castle_moves, black_castle_moves)
             print_board(@board.rows)
-
             #--------------------------------------
 
+            #Check if the current king position is in check, checkmated, or stalemate.
+            #--------------------------------------
             w_update = checkmate_or_stalemate?(white_king)
             b_update = checkmate_or_stalemate?(black_king)
-
             break if w_update.length == 1 && w_update.first == "Done"
             break if b_update.length == 1 && b_update.first == "Done"
-
             in_check_white, white_exit_moves = w_update if w_update.length == 2
             in_check_black, black_exit_moves = b_update if b_update.length == 2
-            
-            
             #--------------------------------------
 
-            #Add draw if only two kings left on board.
+            #TODO: DRAW
+            #-
+            #-
 
+            #Actual Move Making
+            #--------------------------------------
             s, d = prompt_move
-            
-            #Avoid check moves are made here.
+
+            #Get out of check moves are made here.
             if in_check_white
                 check_move(s, d, white_exit_moves)
 
