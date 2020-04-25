@@ -133,7 +133,7 @@ class Board
         valid_moves
     end
 
-    #WORK IN PROGRESS
+    #WORK IN PROGRESS (CHANGE GET MOVES TO VALID MOVES FOR CORRECTNESS.)
     def stalemate(color)
         count = 0
         @rows.each do | row |
@@ -147,9 +147,33 @@ class Board
         count == 0 #If a piece has no valid moves and not in check, then its stalemate.
     end
 
+    def kings_location(color)
+        @rows.each do | row |
+            row.each do | piece |
+                return piece.pos if piece.symbol == :king && piece.color == color
+            end
+        end
+    end
+
+    def not_put_own_king_in_check?(starting_pos)
+        x, y = starting_pos
+        piece = @rows[x][y]
+
+        if piece.symbol != :king
+            king_pos = kings_location(piece.color)
+            after_check = check_valid_moves(piece, king_pos).map { | start, dest| dest }
+            return after_check
+        else
+            #This is because king shouldn't worry about king being in check
+            #Cause if we simulate to see if a kings move causes a king to be in check
+            #then it will throw errors cause the king isn't in the original spot anymore
+            return piece.get_moves 
+        end
+
+    end
+
     def valid_move?(start, dest)
-        x, y = start
-        valid_moves = @rows[x][y].get_moves
+        valid_moves = not_put_own_king_in_check?(start)
         #Uncomment if you want to see where the valid destinations are for a move.
         puts
         print "Valid destinations: #{valid_moves}"
@@ -181,17 +205,14 @@ class Board
             @rows[r2][c2].moved = true
 
         else
-
             @moves_list << [start_pos, end_pos, promotion]
-
             r1, c1 = start_pos
             r2, c2 = end_pos
-            piece_color, desired_promo = promotion
 
+            piece_color, desired_promo = promotion
             @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
 
             case desired_promo
-
             when "q"
                 @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
                 @rows[r2][c2].set_symbol(:queen)
@@ -204,7 +225,6 @@ class Board
                 @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
                 @rows[r2][c2].set_symbol(:bishop)
                 @rows[r2][c2].moved = true 
-
             when "n"
                 @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
                 @rows[r2][c2].set_symbol(:knight)
@@ -212,7 +232,5 @@ class Board
             end
 
         end
-
-        
     end
 end

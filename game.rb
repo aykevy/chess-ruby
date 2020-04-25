@@ -92,9 +92,10 @@ class Game
         end
     end
 
-    def castle_move(s, d, move_list)
-        if @board.valid_move?(s, d) || move_list.include?(d)
-            if move_list.include?(d)
+    def king_move(s, d, castle_move_list)
+        puts "king went through here"
+        if @board.valid_move?(s, d) || castle_move_list.include?(d)
+            if castle_move_list.include?(d)
                 puts "VALID CASTLE MOVE!"
                 puts
                 do_castle(s, d)
@@ -103,12 +104,15 @@ class Game
                 puts
                 @board.move_piece(s, d)
             end
+        else
+            puts "INVALID MOVE!"
+            puts
         end
     end
 
     def play
 
-        simulation_7(@board)
+        simulation_10(@board)
 
         while true
 
@@ -171,11 +175,13 @@ class Game
             #Regular or special moves are made here.
             else
 
+                #Kings will only go through castle move because castle move
+                #contains both normal and castling moveset.
                 if is_king?(s) && @board.rows[s[0]][s[1]].color == :white
-                    castle_move(s, d, white_castle_moves)
-                    
+                    king_move(s, d, white_castle_moves)
+
                 elsif is_king?(s) && @board.rows[s[0]][s[1]].color == :black
-                    castle_move(s, d, black_castle_moves)
+                    king_move(s, d, black_castle_moves)
 
                 elsif is_pawn?(s) && [0, 7].include?(d[0])
                     promotion_move(s, d)
