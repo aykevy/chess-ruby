@@ -19,6 +19,10 @@ class Game
         @turn = @player1
     end
 
+    def change_turn
+        @turn = @turn.color == :white ? @player2 : @player1
+    end
+
     def get_kings
         white = []
         black = []
@@ -58,6 +62,7 @@ class Game
             puts "VALID MOVE!"
             puts
             @board.move_piece(s, d)
+            change_turn #NEW
         else
             puts "INVALID MOVE!"
             puts
@@ -69,6 +74,7 @@ class Game
             puts "VALID MOVE!"
             puts
             @board.move_piece(s, d)
+            change_turn #NEW
         else
             puts "INVALID MOVE!"
             puts
@@ -81,6 +87,7 @@ class Game
         promotion = [@board.rows[p_row][p_col].color, get_promo]
         #Check for valid input later
         @board.move_piece(s, d, promotion)
+        change_turn #NEW
     end
 
     def do_castle(king_pos, king_dest)
@@ -110,10 +117,12 @@ class Game
                 puts "VALID CASTLE MOVE!"
                 puts
                 do_castle(s, d)
+                change_turn #NEW
             else
                 puts "VALID MOVE!"
                 puts
                 @board.move_piece(s, d)
+                change_turn #NEW
             end
         else
             puts "INVALID MOVE!"
@@ -157,54 +166,64 @@ class Game
             white_king, black_king = self.get_kings
             white_castle_moves, in_check_white, white_exit_moves = king_info(white_king)
             black_castle_moves, in_check_black, black_exit_moves = king_info(black_king)
+
+            puts "===========Turn Tracker==========="
+            puts "#{@turn.color}'s Turn!"
+            puts "=================================="
+            puts
             print_castle_moves(white_castle_moves, black_castle_moves)
             print_board(@board.rows)
             #--------------------------------------
 
-            #Check if the current king position is in check, checkmated, or stalemate.
-            #--------------------------------------
-            w_update = checkmate_or_stalemate?(white_king)
-            b_update = checkmate_or_stalemate?(black_king)
-            break if w_update.length == 1 && w_update.first == "Done"
-            break if b_update.length == 1 && b_update.first == "Done"
-            in_check_white, white_exit_moves = w_update if w_update.length == 2
-            in_check_black, black_exit_moves = b_update if b_update.length == 2
-            #--------------------------------------
-
-            #TODO: DRAW
-            #-
-            #-
+            if @turn.color == :white
+                w_update = checkmate_or_stalemate?(white_king)
+                break if w_update.length == 1 && w_update.first == "Done"
+                in_check_white, white_exit_moves = w_update if w_update.length == 2
+            else
+                b_update = checkmate_or_stalemate?(black_king)
+                break if b_update.length == 1 && b_update.first == "Done"
+                in_check_black, black_exit_moves = b_update if b_update.length == 2
+            end
 
             #Actual Move Making
-            #--------------------------------------
             s, d = prompt_move
 
-            #Get out of check moves are made here.
-            if in_check_white
-                check_move(s, d, white_exit_moves)
-
-            elsif in_check_black
-                check_move(s, d, black_exit_moves)
-
-            #Before moving on, check if its a piece in the first place.
-            elsif is_null?(s)
-                prompt_non_piece_error
-
-            #Regular or special moves are made here.
-            else
-                if is_king?(s) && @board.rows[s[0]][s[1]].color == :white
-                    king_move(s, d, white_castle_moves)
-
-                elsif is_king?(s) && @board.rows[s[0]][s[1]].color == :black
-                    king_move(s, d, black_castle_moves)
-
-                elsif is_pawn?(s) && [0, 7].include?(d[0])
-                    promotion_move(s, d)
-                    
+            if @turn.color == :white
+                if @board.rows[s[0]][s[1]].color != @turn.color
+                    puts "That is not your piece or it is a empty space!"
                 else
-                    normal_move(s, d)
+                    #Get out of check moves are made here.
+                    if in_check_white
+                        check_move(s, d, white_exit_moves)
+                    else
+                        if is_king?(s)
+                            king_move(s, d, white_castle_moves)
+                        elsif is_pawn?(s) && [0, 7].include?(d[0])
+                            promotion_move(s, d)
+                        else
+                            normal_move(s, d)
+                        end
+                    end
+                end
+
+            else
+                if @board.rows[s[0]][s[1]].color != @turn.color
+                    puts "That is not your piece or it is a empty space!"
+                else
+                    if in_check_black
+                        check_move(s, d, black_exit_moves)
+                    else
+                        if is_king?(s)
+                            king_move(s, d, black_castle_moves)
+                        elsif is_pawn?(s) && [0, 7].include?(d[0])
+                            promotion_move(s, d)
+                        else
+                            normal_move(s, d)
+                        end
+                    end
                 end
             end
+
         end
     end
 

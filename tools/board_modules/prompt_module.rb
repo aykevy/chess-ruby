@@ -43,9 +43,9 @@ module Prompt
     end
 
     #Tells the user that the chosen piece is a null piece.
-    def prompt_non_piece_error
-        puts "INVALID MOVE! (That is not a piece)"
-        puts
-    end
+    #def prompt_non_piece_error
+        #puts "INVALID MOVE! (That is not a piece)"
+        #puts
+    #end
     
 end
