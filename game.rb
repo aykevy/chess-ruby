@@ -10,8 +10,13 @@ class Game
     include Prompt
     include Simulation
 
+    attr_accessor :player1, :player2, :turn
+
     def initialize
         @board = Board.new()
+        @player1 = Player.new("Player 1", :white)
+        @player2 = Player.new("Player 2", :black)
+        @turn = @player1
     end
 
     def get_kings
@@ -109,51 +114,62 @@ class Game
         end
     end
 
+    def king_info(king)
+        castle_moves = king.castle
+        in_check = false
+        exit_moves = []
+        [castle_moves, in_check, exit_moves]
+    end
+
+    def checkmate_or_stalemate?(king)
+        info_updates = []
+        opposite_color = king.color == :white ? :black : :white
+        if @board.check(king.pos)
+            puts "#{king.color} king in check. Resolve check first."
+            check_exits = @board.checkmate_exit(king)
+            if check_exits.empty?
+                puts "Checkmate. #{opposite_color} wins!"
+                info_updates << "Done"
+            else
+                info_updates << true
+                info_updates << check_exits
+            end
+        elsif @board.stalemate(king.color)
+            puts "Stalemate, #{king.color} has no legal moves"
+            info_updates << "Done"
+        else
+            info_updates << "Continue"
+        end
+        #Case 1: If in check, return this. #[true, check_exits]
+        #Case 2: If in checkmate, return this. #["Done"]
+        #Case 3: If in stalemate, return this. #["Done"]
+        info_updates 
+    end
+
     def play
 
-        simulation_9(@board)
+        simulation_7(@board)
 
         while true
-
             white_king, black_king = self.get_kings
-            white_castle_moves, black_castle_moves = white_king.castle, black_king.castle
-            in_check_white, in_check_black = false, false
-            white_exit_moves, black_exit_moves = [], []
-            
+            white_castle_moves, in_check_white, white_exit_moves = king_info(white_king)
+            black_castle_moves, in_check_black, black_exit_moves = king_info(black_king)
             print_castle_moves(white_castle_moves, black_castle_moves)
             print_board(@board.rows)
 
-            #Test For King Capture Incase for Both
             #--------------------------------------
-            if @board.check(white_king.pos)
-                puts "White king in check. Resolve check first."
-                check_exits = @board.checkmate_exit(white_king)
-                if check_exits.empty?
-                    puts "Checkmate. Black wins!"
-                    break
-                else
-                    white_exit_moves = check_exits
-                    in_check_white = true
-                end
 
-            elsif @board.check(black_king.pos)
-                puts "Black king in check. Resolve check first."
-                check_exits2 = @board.checkmate_exit(black_king)
-                if check_exits2.empty?
-                    puts "Checkmate. White wins!"
-                    break
-                else
-                    black_exit_moves = check_exits2
-                    in_check_black = true
-                end
+            w_update = checkmate_or_stalemate?(white_king)
+            b_update = checkmate_or_stalemate?(black_king)
+
+            break if w_update.length == 1 && w_update.first == "Done"
+            break if b_update.length == 1 && b_update.first == "Done"
+
+            in_check_white, white_exit_moves = w_update if w_update.length == 2
+            in_check_black, black_exit_moves = b_update if b_update.length == 2
             
-            elsif @board.stalemate(:white)
-                puts "Stalemate, white has no legal moves"
-                break
-            elsif @board.stalemate(:black)
-                puts "Stalemate, black has no legal moves"
-                break
-            end
+            
+            #--------------------------------------
 
             #Add draw if only two kings left on board.
 
@@ -172,8 +188,6 @@ class Game
 
             #Regular or special moves are made here.
             else
-                #Kings will only go through castle move because castle move
-                #contains both normal and castling moveset.
                 if is_king?(s) && @board.rows[s[0]][s[1]].color == :white
                     king_move(s, d, white_castle_moves)
 
@@ -193,8 +207,6 @@ class Game
 end
 
 if __FILE__ == $PROGRAM_NAME
-    p = Player.new("Player 1", :white)
-    p = Player.new("Player 2", :black)
     g = Game.new()
     g.play
 end

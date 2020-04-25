@@ -41,6 +41,15 @@ class Board
         end
     end
 
+    #This function gets you the kings location of the given color.
+    def kings_location(color)
+        @rows.each do | row |
+            row.each do | piece |
+                return piece.pos if piece.symbol == :king && piece.color == color
+            end
+        end
+    end
+
     #Will check if the current position is part of the piece class and check if
     #it's also not part of the nullpiece class.
     def piece?(pos)
@@ -127,8 +136,6 @@ class Board
     def checkmate_exit(king)
         valid_moves = check_king_exits(king)
         valid_moves += check_king_guards(king)
-        puts "=================================================================================="
-        puts
         valid_moves
     end
 
@@ -143,15 +150,6 @@ class Board
             end
         end
         count == 0 #If a piece has no legal moves and not in check, then its stalemate.
-    end
-
-    #This function gets you the kings location of the given color.
-    def kings_location(color)
-        @rows.each do | row |
-            row.each do | piece |
-                return piece.pos if piece.symbol == :king && piece.color == color
-            end
-        end
     end
 
     #This function returns a set of destinations after going through a bunch of
