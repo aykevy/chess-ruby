@@ -1,12 +1,14 @@
 require_relative "player"
 require_relative "board"
 require_relative "tools/board_modules/display_module"
+require_relative "tools/board_modules/prompt_module"
 require_relative "tools/test_modules/simulation_module"
 
 class Game
 
-    include Simulation
     include Display
+    include Prompt
+    include Simulation
 
     def initialize
         @board = Board.new()
@@ -39,48 +41,6 @@ class Game
         !@board.piece?(pos)
     end
 
-    def prompt_move
-        puts
-        puts "Please choose a piece to move: "
-        start = gets.chomp.split(",")
-        s = start.map(&:to_i)
-        puts "Please choose a the destination: "
-        destination = gets.chomp.split(",")
-        d = destination.map(&:to_i)
-        puts
-        puts
-        [s, d] #putting puts after returns [nil, nil]
-    end
-
-    def prompt_promotion
-        puts
-        puts "Please choose a piece for pawn at position to promote to: "
-        puts "q for queen"
-        puts "r for rook"
-        puts "b for bishop"
-        puts "n for knight"
-        puts
-
-        result = gets.chomp
-        case result
-        when "q"
-            return "q"
-        when "r"
-            return "r"
-        when "b"
-            return "b"
-        when "n"
-            return "n"
-        else
-            return "none"
-        end
-    end
-
-    def prompt_non_piece_error
-        puts "INVALID MOVE! (That is not a piece)"
-        puts
-    end
-
     def normal_move(s, d)
         if @board.valid_move?(s, d)
             puts "VALID MOVE!"
@@ -101,6 +61,14 @@ class Game
             puts "INVALID MOVE!"
             puts
         end
+    end
+
+    def promotion_move(s, d)
+        p_row, p_col = s
+        get_promo = prompt_promotion
+        promotion = [@board.rows[p_row][p_col].color, get_promo]
+        #Check for valid input later
+        @board.move_piece(s, d, promotion)
     end
 
     def do_castle(king_pos, king_dest)
@@ -140,7 +108,7 @@ class Game
 
     def play
 
-        simulation_8(@board)
+        simulation_7(@board)
 
         while true
 
@@ -179,7 +147,15 @@ class Game
             end
             #--------------------------------------
 
+            #add draw if only two kings left on board.
+
+            #--------------------------------------
+
+
+            #--------------------------------------
+
             s, d = prompt_move
+            
 
             #Avoid check moves are made here.
             if in_check_white
@@ -194,33 +170,21 @@ class Game
 
             #Regular or special moves are made here.
             else
+
                 if is_king?(s) && @board.rows[s[0]][s[1]].color == :white
                     castle_move(s, d, white_castle_moves)
-
+                    
                 elsif is_king?(s) && @board.rows[s[0]][s[1]].color == :black
                     castle_move(s, d, black_castle_moves)
 
                 elsif is_pawn?(s) && [0, 7].include?(d[0])
-                    
-                    p_row, p_col = s
-            
-                    get_promo = prompt_promotion
-                    promotion = [@board.rows[p_row][p_col].color, get_promo]
-
-                    #add for valid input later
-
-                    @board.move_piece(s, d, promotion)
-    
-
-            
-
+                    promotion_move(s, d)
                     
                 else
                     normal_move(s, d)
                 end
 
             end
-
         end
     end
 

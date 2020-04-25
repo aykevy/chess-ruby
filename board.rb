@@ -133,8 +133,18 @@ class Board
         valid_moves
     end
 
+    #WORK IN PROGRESS
     def stalemate(color)
-        puts "Stalemate"
+        count = 0
+        @rows.each do | row |
+            row.each do | piece |
+                if piece.color == color
+                    x, y = piece.pos
+                    count += 1 if @rows[x][y].get_moves.length >= 0
+                end
+            end
+        end
+        count == 0 #If a piece has no valid moves and not in check, then its stalemate.
     end
 
     def valid_move?(start, dest)
@@ -150,7 +160,7 @@ class Board
     def move_piece(start_pos, end_pos, promotion = nil)
 
         if promotion.nil?
-            moves_list << [start_pos, end_pos]
+            @moves_list << [start_pos, end_pos]
             r1, c1 = start_pos
             r2, c2 = end_pos
 
@@ -169,9 +179,10 @@ class Board
             end
             @rows[r2][c2].set_symbol(piece_type)
             @rows[r2][c2].moved = true
+
         else
 
-            moves_list << [start_pos, end_pos, promotion]
+            @moves_list << [start_pos, end_pos, promotion]
 
             r1, c1 = start_pos
             r2, c2 = end_pos
@@ -185,12 +196,10 @@ class Board
                 @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
                 @rows[r2][c2].set_symbol(:queen)
                 @rows[r2][c2].moved = true
-
             when "r"
                 @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
                 @rows[r2][c2].set_symbol(:rook)
                 @rows[r2][c2].moved = true 
-
             when "b"
                 @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
                 @rows[r2][c2].set_symbol(:bishop)
@@ -201,6 +210,7 @@ class Board
                 @rows[r2][c2].set_symbol(:knight)
                 @rows[r2][c2].moved = true 
             end
+
         end
 
         

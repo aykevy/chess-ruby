@@ -73,7 +73,8 @@ class Pawn < Piece
     
         #Checks for opposite color pieces in diagonals.
         bounded_moves.each { | pos | valid << pos if piece?(pos) && opposite_color?(pos) }
-        valid 
+        
+        valid
 
     end
     
