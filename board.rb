@@ -60,12 +60,12 @@ class Board
         false
     end
 
-    #Helper function. Will check if the given piece has any valid moves. The
-    #checking_pos is temporary and is useful for checking if the movement
-    #of the piece will cause that given checking_pos to be in check.
-    #Primarily though, you will only be using this function for the sake of
-    #seeing whether or not a move will affect the king.
-    def check_valid_moves(piece, checking_pos = nil)
+    #Helper function. Will check if the given piece has any valid moves.
+    #Given a piece, it will check to see if they have any valid moves and on
+    #top of that have moves that won't affect a kings position. King_pos is nil
+    #by default because you may want to check valid moves on a king piece so you
+    #do not need require the king_pos.
+    def check_valid_moves(piece, king_pos = nil)
         valid = [] #[ [[start_row, start_col], [dest_row, dest_col]], ... , etc. ] 
         moves = piece.get_moves
         moves.each_with_index do | move, idx |
@@ -79,10 +79,10 @@ class Board
             dup_board.rows[r2][c2] = dup_piece
             dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
 
-            if checking_pos.nil?
+            if king_pos.nil?
                 valid << [[r1, c1], move] unless dup_board.check(move)
             else
-                valid << [[r1, c1], move] unless dup_board.check(checking_pos)
+                valid << [[r1, c1], move] unless dup_board.check(king_pos)
             end
 
         end
@@ -132,18 +132,17 @@ class Board
         valid_moves
     end
 
-    #WORK IN PROGRESS (CHANGE GET MOVES TO VALID MOVES FOR CORRECTNESS.)
     def stalemate(color)
         count = 0
         @rows.each do | row |
             row.each do | piece |
                 if piece.color == color
-                    x, y = piece.pos
-                    count += 1 if @rows[x][y].get_moves.length >= 0
+                   moves = get_all_legal_moves(piece.pos)
+                   count += moves.length
                 end
             end
         end
-        count == 0 #If a piece has no valid moves and not in check, then its stalemate.
+        count == 0 #If a piece has no legal moves and not in check, then its stalemate.
     end
 
     #This function gets you the kings location of the given color.
@@ -157,7 +156,7 @@ class Board
 
     #This function returns a set of destinations after going through a bunch of
     #tests like testing for valid moves that wouldn't put the king in check.
-    def not_put_own_king_in_check?(starting_pos)
+    def get_all_legal_moves(starting_pos)
         x, y = starting_pos
         piece = @rows[x][y]
         if piece.symbol != :king
@@ -171,8 +170,9 @@ class Board
         end
     end
 
+    #This function returns true if the given destination is a valid move.
     def valid_move?(start, dest)
-        valid_moves = not_put_own_king_in_check?(start)
+        valid_moves = get_all_legal_moves(start)
         #Uncomment if you want to see where the valid destinations are for a move.
         puts
         print "Valid destinations: #{valid_moves}"
@@ -180,6 +180,10 @@ class Board
         valid_moves.include?(dest)
     end
 
+    #This function just moves one piece at the a given start position to
+    #the destination. It just moves the piece, does not check for validity.
+    #This is good for testing if you wanna simulate a premade board for the
+    #intro.
     def move_piece(start_pos, end_pos, promotion = nil)
 
         if promotion.nil?

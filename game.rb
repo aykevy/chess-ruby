@@ -93,7 +93,6 @@ class Game
     end
 
     def king_move(s, d, castle_move_list)
-        puts "king went through here"
         if @board.valid_move?(s, d) || castle_move_list.include?(d)
             if castle_move_list.include?(d)
                 puts "VALID CASTLE MOVE!"
@@ -136,9 +135,8 @@ class Game
                     white_exit_moves = check_exits
                     in_check_white = true
                 end
-            end
 
-            if @board.check(black_king.pos)
+            elsif @board.check(black_king.pos)
                 puts "Black king in check. Resolve check first."
                 check_exits2 = @board.checkmate_exit(black_king)
                 if check_exits2.empty?
@@ -148,19 +146,19 @@ class Game
                     black_exit_moves = check_exits2
                     in_check_black = true
                 end
+            
+            elsif @board.stalemate(:white)
+                puts "Stalemate, white has no legal moves"
+                break
+            elsif @board.stalemate(:black)
+                puts "Stalemate, black has no legal moves"
+                break
             end
-            #--------------------------------------
 
-            #add draw if only two kings left on board.
-
-            #--------------------------------------
-
-
-            #--------------------------------------
+            #Add draw if only two kings left on board.
 
             s, d = prompt_move
             
-
             #Avoid check moves are made here.
             if in_check_white
                 check_move(s, d, white_exit_moves)
@@ -174,7 +172,6 @@ class Game
 
             #Regular or special moves are made here.
             else
-
                 #Kings will only go through castle move because castle move
                 #contains both normal and castling moveset.
                 if is_king?(s) && @board.rows[s[0]][s[1]].color == :white
@@ -189,7 +186,6 @@ class Game
                 else
                     normal_move(s, d)
                 end
-
             end
         end
     end
