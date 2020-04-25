@@ -128,7 +128,6 @@ module Simulation
             board.move_piece(start, dest)
         end
     end
-
     
     #Test 9: Stalemate
     def simulation_9(board)
@@ -152,15 +151,14 @@ module Simulation
             [[0, 6], [6, 6]], [[5, 5], [4, 7]], [[4, 7], [5, 7]],
             [[0, 5], [2, 7]], [[6, 6], [2, 7]], [[2, 7], [1, 0]],
             [[7, 3], [5, 7]], [[1, 0], [6, 7]], [[5, 7], [6, 7]],
-            [[6, 7], [7, 7]]
+            [[6, 7], [7, 7]], [[4, 4], [1, 4]], [[7, 7], [2, 4]]
         ]
         simulate_intro.each do | start, dest = sub_arr |
             board.move_piece(start, dest)
         end
     end
 
-    #Testing for moves that would cause ur own color king to be checked if moved.
-    #So they should not move.
+    #Test 10: Should not cause your own colored king to be in check if you do a move.
     def simulation_10(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
@@ -178,7 +176,5 @@ module Simulation
             board.move_piece(start, dest)
         end
     end
-
-    #Test ?: Enpassant
 
 end

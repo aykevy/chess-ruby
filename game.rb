@@ -112,7 +112,7 @@ class Game
 
     def play
 
-        simulation_10(@board)
+        simulation_9(@board)
 
         while true
 

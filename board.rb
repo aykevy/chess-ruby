@@ -66,8 +66,7 @@ class Board
     #Primarily though, you will only be using this function for the sake of
     #seeing whether or not a move will affect the king.
     def check_valid_moves(piece, checking_pos = nil)
-
-        valid = [] #[ [[start_row, start_col], [dest_row, dest_col]] ] 
+        valid = [] #[ [[start_row, start_col], [dest_row, dest_col]], ... , etc. ] 
         moves = piece.get_moves
         moves.each_with_index do | move, idx |
 
@@ -147,6 +146,7 @@ class Board
         count == 0 #If a piece has no valid moves and not in check, then its stalemate.
     end
 
+    #This function gets you the kings location of the given color.
     def kings_location(color)
         @rows.each do | row |
             row.each do | piece |
@@ -155,21 +155,20 @@ class Board
         end
     end
 
+    #This function returns a set of destinations after going through a bunch of
+    #tests like testing for valid moves that wouldn't put the king in check.
     def not_put_own_king_in_check?(starting_pos)
         x, y = starting_pos
         piece = @rows[x][y]
-
         if piece.symbol != :king
             king_pos = kings_location(piece.color)
             after_check = check_valid_moves(piece, king_pos).map { | start, dest| dest }
             return after_check
         else
-            #This is because king shouldn't worry about king being in check
-            #Cause if we simulate to see if a kings move causes a king to be in check
-            #then it will throw errors cause the king isn't in the original spot anymore
-            return piece.get_moves 
+            #We don't add a king_pos cause were checking the kings position
+            #itself after it moves.
+            return check_valid_moves(piece).map { | start, dest| dest }
         end
-
     end
 
     def valid_move?(start, dest)
