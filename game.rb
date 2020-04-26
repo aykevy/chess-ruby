@@ -133,6 +133,7 @@ class Game
     #Case 1: If in check, return [true, check_exits]
     #Case 2: If in checkmate, return ["Done"]
     #Case 3: If in stalemate, return ["Done"]
+    #Case 4: If none above, return ["Continue"]
     def checkmate_or_stalemate?(king)
         info_updates = []
         opposite_color = king.color == :white ? :black : :white
@@ -141,22 +142,41 @@ class Game
             check_exits = @board.checkmate_exit(king)
             if check_exits.empty?
                 puts "Checkmate, #{opposite_color} wins!"
-                info_updates << "Done"
+                info_updates = ["Done"]
             else
-                info_updates << true
-                info_updates << check_exits
+                info_updates = [true, check_exits]
             end
         elsif @board.stalemate(king.color)
             puts "Stalemate, #{king.color} has no legal moves."
-            info_updates << "Done"
+            info_updates = ["Done"]
         else
-            info_updates << "Continue"
+            info_updates = ["Continue"]
         end
         info_updates 
     end
 
+    def move_selection(s, d, in_check, exit_moves, castle_moves)
+        if @board.rows[s[0]][s[1]].color != @turn.color
+            puts "That is not your piece or it is a empty space!"
+        else
+            if in_check
+                check_move(s, d, exit_moves)
+            else
+                if is_king?(s)
+                    king_move(s, d, castle_moves)
+                elsif is_pawn?(s) && [0, 7].include?(d[0])
+                    promotion_move(s, d)
+                else
+                    normal_move(s, d)
+                end
+            end
+        end
+    end
+
+
     def play
 
+        #Simulations test place here:
         simulation_7(@board)
 
         while true
@@ -167,10 +187,7 @@ class Game
             white_castle_moves, in_check_white, white_exit_moves = king_info(white_king)
             black_castle_moves, in_check_black, black_exit_moves = king_info(black_king)
 
-            puts "===========Turn Tracker==========="
-            puts "#{@turn.color}'s Turn!"
-            puts "=================================="
-            puts
+            print_turn(@turn)
             print_castle_moves(white_castle_moves, black_castle_moves)
             print_board(@board.rows)
             #--------------------------------------
@@ -189,39 +206,9 @@ class Game
             s, d = prompt_move
 
             if @turn.color == :white
-                if @board.rows[s[0]][s[1]].color != @turn.color
-                    puts "That is not your piece or it is a empty space!"
-                else
-                    #Get out of check moves are made here.
-                    if in_check_white
-                        check_move(s, d, white_exit_moves)
-                    else
-                        if is_king?(s)
-                            king_move(s, d, white_castle_moves)
-                        elsif is_pawn?(s) && [0, 7].include?(d[0])
-                            promotion_move(s, d)
-                        else
-                            normal_move(s, d)
-                        end
-                    end
-                end
-
+                move_selection(s, d, in_check_white, white_exit_moves, white_castle_moves)
             else
-                if @board.rows[s[0]][s[1]].color != @turn.color
-                    puts "That is not your piece or it is a empty space!"
-                else
-                    if in_check_black
-                        check_move(s, d, black_exit_moves)
-                    else
-                        if is_king?(s)
-                            king_move(s, d, black_castle_moves)
-                        elsif is_pawn?(s) && [0, 7].include?(d[0])
-                            promotion_move(s, d)
-                        else
-                            normal_move(s, d)
-                        end
-                    end
-                end
+                move_selection(s, d, in_check_black, black_exit_moves, black_castle_moves)
             end
 
         end

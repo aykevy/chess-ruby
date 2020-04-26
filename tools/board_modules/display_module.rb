@@ -66,4 +66,11 @@ module Display
         puts
     end
 
+    def print_turn(turn)
+        puts "===========Turn Tracker==========="
+        puts "#{turn.color}'s Turn!"
+        puts "=================================="
+        puts
+    end
+
 end
