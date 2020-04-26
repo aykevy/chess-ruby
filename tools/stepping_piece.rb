@@ -138,7 +138,7 @@ class SteppingPiece < Piece
 
     def get_moves
         possible_moves = moves(@pos, @symbol)
-        valid = get_unblocked_moves(possible_moves)
+        get_unblocked_moves(possible_moves)
     end
     
 end

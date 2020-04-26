@@ -58,33 +58,27 @@ class Game
         @board.rows[row][col].symbol == :pawn
     end
 
-    #Checks if the position is null.
-    def is_null?(pos)
-        !@board.piece?(pos)
-    end
-
     #Checks if the current turn is in checkmate or stalemate.
     #Case 1: If in check, return [true, check_exits]
     #Case 2: If in checkmate, return ["Done"]
     #Case 3: If in stalemate, return ["Done"]
     #Case 4: If none above, return ["Continue"]
     def checkmate_or_stalemate?(king)
-        info_updates = []
         opposite_color = king.color == :white ? :black : :white
         if @board.check(king.pos)
             puts "Check, #{king.color} king in check."
             check_exits = @board.checkmate_exit(king)
             if check_exits.empty?
                 puts "Checkmate, #{opposite_color} wins!"
-                info_updates = ["Done"]
+                return ["Done"]
             else
-                info_updates = [true, check_exits]
+                return [true, check_exits]
             end
         elsif @board.stalemate(king.color)
             puts "Stalemate, #{king.color} has no legal moves."
-            info_updates = ["Done"]
+            return ["Done"]
         else
-            info_updates = ["Continue"]
+            return ["Continue"]
         end
         info_updates 
     end
@@ -126,24 +120,24 @@ class Game
     end
 
     #Helper function that does the castling.
-    def do_castle(king_pos, king_dest)
-        case king_dest
+    def do_castle(king_s, king_d)
+        case king_d
         when [7, 2]
-            rook_start, rook_dest = [[7, 0], [7, 3]]
-            @board.move_piece(king_pos, king_dest)
-            @board.move_piece(rook_start, rook_dest)
+            rook_s, rook_d = [[7, 0], [7, 3]]
+            @board.move_piece(king_s, king_d)
+            @board.move_piece(rook_s, rook_d)
         when [7, 6]
-            rook_start, rook_dest = [[7, 7], [7, 5]]
-            @board.move_piece(king_pos, king_dest)
-            @board.move_piece(rook_start, rook_dest)
+            rook_s, rook_d = [[7, 7], [7, 5]]
+            @board.move_piece(king_s, king_d)
+            @board.move_piece(rook_s, rook_d)
         when [0, 2]
-            rook_start, rook_dest = [[0, 0], [0, 3]]
-            @board.move_piece(king_pos, king_dest)
-            @board.move_piece(rook_start, rook_dest)
+            rook_s, rook_d = [[0, 0], [0, 3]]
+            @board.move_piece(king_s, king_d)
+            @board.move_piece(rook_s, rook_d)
         when [0, 6]
-            rook_start, rook_dest = [[0, 7], [0, 5]]
-            @board.move_piece(king_pos, king_dest)
-            @board.move_piece(rook_start, rook_dest)
+            rook_s, rook_d = [[0, 7], [0, 5]]
+            @board.move_piece(king_s, king_d)
+            @board.move_piece(rook_s, rook_d)
         end
     end
 
@@ -167,35 +161,48 @@ class Game
         end
     end
 
-
-    def do_enpassant
+    def get_enpassant_positions
         previous = @board.moves_list.last
         if previous.length == 2 #Length can be 3 for promotions.
+            
             s, d = previous
             start_r, start_c = s
             dest_r, dest_c = d
-
             piece = @board.rows[dest_r][dest_c]
 
-            if piece.symbol == :pawn
-                if start_r == 1 && dest_r == 3 && start_c == dest_c
-                    puts "HE MOVED TWO FORWARD (BLACK)"
-                    moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
-                    can_passant = moves.select { | row, col = move | col >= 0 && col <= 7 }
-                    puts
-                    print can_passant
-                    puts
+            enpass_case_one = start_r == 1 && dest_r == 3 && start_c == dest_c
+            enpass_case_two = start_r == 6 && dest_r == 4 && start_c == dest_c
 
-                elsif start_r == 6 && dest_r == 4 && start_c == dest_c
-                    puts "HE MOVED TWO FORWARD (WHITE)"
-                    moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
-                    can_passant = moves.select { | row, col = move | col >= 0 && col <= 7 }
-                    puts
-                    print can_passant
-                    puts
-                end
+            if piece.symbol == :pawn && (enpass_case_one || enpass_case_two)
+                moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
+                return moves.select { | row, col = move | col >= 0 && col <= 7 }
             end
 
+        end
+        []
+    end
+
+    def get_enpassant_destination
+        _, prev_dest = @board.moves_list.last
+        prev_r, prev_c = prev_dest
+        @turn.color == :white ? [prev_r - 1, prev_c] : [prev_r + 1, prev_c]
+    end
+
+    def pawn_move(s, d)
+        #Piece color and stuff should already be checked for in move selection, 
+        #so only worry about if your pawns positions are included in enpassant move list.
+
+        pos_that_can_enpass = get_enpassant_positions
+
+        if [0, 7].include?(d[0])
+            promotion_move(s, d)
+
+        elsif pos_that_can_enpass.include?(s)
+
+            enpassant_move(s, get_enpassant_destination)
+
+        else
+            normal_move(s, d)
         end
     end
 
@@ -208,8 +215,8 @@ class Game
             else
                 if is_king?(s)
                     king_move(s, d, castle_moves)
-                elsif is_pawn?(s) && [0, 7].include?(d[0])
-                    promotion_move(s, d)
+                elsif is_pawn?(s)
+                    pawn_move(s, d)
                 else
                     normal_move(s, d)
                 end
@@ -221,16 +228,16 @@ class Game
         #Simulations test place here:
         simulation_7(@board)
         while true
-            puts do_enpassant
 
-            #Set up king informations on both sides
+            #Set up king informations on both sides.
             white_king, black_king = self.get_kings
             white_castle_moves, in_check_white, white_exit_moves = king_info(white_king)
             black_castle_moves, in_check_black, black_exit_moves = king_info(black_king)
 
-            #Print Interface
+            #Print Interface (Can comment out everything but the board to remove trackers)
             print_turn(@turn)
             print_castle_moves(white_castle_moves, black_castle_moves)
+            print_enpassant_moves(get_enpassant_positions)
             print_board(@board.rows)
            
             #Make moves depending on turn.

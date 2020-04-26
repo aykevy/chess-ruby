@@ -226,7 +226,7 @@ class Board
             @rows[r2][c2].set_symbol(:knight)
             @rows[r2][c2].moved = true 
         end
-        
+
     end
 
     #This function just moves one piece at the a given start position to
@@ -234,13 +234,10 @@ class Board
     #This is good for testing if you wanna simulate a premade board for the
     #intro.
     def move_piece(start_pos, end_pos, promotion = nil)
-
         if promotion.nil?
             normal_placement(start_pos, end_pos)
-
         else
-            
-
+            promotion_placement(start_pos, end_pos, promotion)
         end
     end
 end

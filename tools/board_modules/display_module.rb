@@ -8,8 +8,14 @@ module Display
     #Black pieces are denoted by $
     #P = Pawn, R = Rook, B = Bishop, N = Knight, Q = Queen, K = King
     def print_board(board_rows)
-        puts "============The Board============"
+        puts "Trackers^"
         puts
+        puts
+        puts 
+        puts "Chess Game"
+        puts "----------------------------------"
+        puts "============The Board============="
+        puts "----------------------------------"
         puts "   0   1   2   3   4   5   6   7 "
         puts "---------------------------------"
         board_rows.each_with_index do | sub_arr, idx |
@@ -53,23 +59,35 @@ module Display
         puts "==========Castle Tracker=========="
         puts
         if white_castle_moves.empty?
-            puts "White Castle Moves: None"
+            puts "White Castle Destination: None"
         else
-            puts "White Castle Moves: #{white_castle_moves}"
+            puts "White Castle Destination: #{white_castle_moves}"
         end
 
         if black_castle_moves.empty?
-            puts "Black Castle Moves: None"
+            puts "Black Castle Destination: None"
         else
-            puts "Black Castle Moves: #{black_castle_moves}"
+            puts "Black Castle Destination: #{black_castle_moves}"
         end
+        puts
         puts
     end
 
     def print_turn(turn)
         puts "===========Turn Tracker==========="
+        puts
         puts "#{turn.color}'s Turn!"
-        puts "=================================="
+        puts
+        puts
+    end
+
+    def print_enpassant_moves(enpassant_moves)
+        puts "========Enpassant Tracker========="
+        puts
+        puts "Valid positions that can enpassant unless"
+        puts "is not your piece color or is a null space:"
+        puts "#{enpassant_moves}"
+        puts
         puts
     end
 
