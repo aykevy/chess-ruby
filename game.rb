@@ -253,7 +253,7 @@ class Game
         while true
 
             #Set up king informations on both sides.
-            white_king, black_king = self.get_kings
+            white_king, black_king = get_kings
             white_castle_moves, in_check_white, white_exit_moves = king_info(white_king)
             black_castle_moves, in_check_black, black_exit_moves = king_info(black_king)
 
