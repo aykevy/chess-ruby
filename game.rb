@@ -67,7 +67,7 @@ class Game
         opposite_color = king.color == :white ? :black : :white
         if @board.check(king.pos)
             puts "Check, #{king.color} king in check."
-            check_exits = @board.checkmate_exit(king)
+            check_exits = @board.checkmate_exit(king) #if check exits is empty, do enpassant if avaialble
             if check_exits.empty?
                 puts "Checkmate, #{opposite_color} wins!"
                 return ["Done"]
@@ -88,7 +88,7 @@ class Game
             puts "VALID MOVE!"
             puts
             @board.move_piece(s, d)
-            change_turn #NEW
+            change_turn
         else
             puts "INVALID MOVE!"
             puts
@@ -101,7 +101,7 @@ class Game
             puts "VALID MOVE!"
             puts
             @board.move_piece(s, d)
-            change_turn #NEW
+            change_turn
         else
             puts "INVALID MOVE!"
             puts
@@ -137,12 +137,12 @@ class Game
                 puts "VALID CASTLE MOVE!"
                 puts
                 do_castle(s, d)
-                change_turn #NEW
+                change_turn
             else
                 puts "VALID MOVE!"
                 puts
                 @board.move_piece(s, d)
-                change_turn #NEW
+                change_turn
             end
         else
             puts "INVALID MOVE!"
@@ -180,13 +180,23 @@ class Game
 
     #Helper function that does the enpassant.
     def do_enpassant(s, d)
+        king_piece = get_kings.select { | king_piece | king_piece.color == @turn.color }
+        king_pos = king_piece.first.pos
+
+        current_piece = @board.rows[s[0]][s[1]]
         _, prev_dest = @board.moves_list.last
         prev_r, prev_c = prev_dest
-        @board.rows[prev_r][prev_c] = NullPiece.new(:color, @board, [prev_r, prev_c])
-        puts "VALID MOVE!"
-        puts
-        @board.move_piece(s, d)
-        change_turn #NEW
+
+        if @board.check_valid_enpassant?(d, current_piece, prev_dest, king_pos)
+            @board.rows[prev_r][prev_c] = NullPiece.new(:color, @board, [prev_r, prev_c])
+            puts "VALID MOVE!"
+            puts
+            @board.move_piece(s, d)
+            change_turn
+        else
+            puts "INVALID MOVE! That enpassant will check your king."
+            puts
+        end
     end
 
     #Helper function that promotes the pawn.
@@ -218,6 +228,8 @@ class Game
     def move_selection(s, d, in_check, exit_moves, castle_moves)
         if @board.rows[s[0]][s[1]].color != @turn.color
             puts "That is not your piece or it is a empty space!"
+            puts
+            puts
         else
             if in_check
                 check_move(s, d, exit_moves)
@@ -237,7 +249,7 @@ class Game
     def play
 
         #Simulations test place here:
-        simulation_7(@board)
+        simulation_11(@board)
         while true
 
             #Set up king informations on both sides.
@@ -268,6 +280,7 @@ class Game
             end
             
         end
+        
     end
 
 end

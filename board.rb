@@ -98,8 +98,23 @@ class Board
 
     #TODO! Similar to check_valid_moves gotta pass in an extra location to null.
     #and promo. only have to do once. no bullshit, no loops, no get moves.
-    def check_valid_moves_enpassant_promo
-        puts "hi"
+    def check_valid_enpassant?(intended_move, piece, prev_dest, king_pos)
+        dup_board = copy
+        dup_piece = piece.copy(piece.color, dup_board, intended_move, piece.symbol)
+
+        r1, c1 = piece.pos
+        r2, c2 = intended_move
+        r3, c3 = prev_dest
+
+        dup_board.rows[r2][c2] = dup_piece
+        dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
+        dup_board.rows[r3][c3] = NullPiece.new(:color, dup_board, [r3, c3])
+
+        dup_board.check(king_pos) ? false : true
+    end
+
+    #final
+    def check_valid_promotion
     end
 
     #This function checks if the king can move away to a safe position or can
