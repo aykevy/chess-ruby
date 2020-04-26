@@ -163,7 +163,7 @@ module Simulation
         end
     end
 
-    #Test 10
+    #Test 10:
     #Should not cause your own colored king to be in check if you do a move.
     def simulation_10(board)
         simulate_intro = [
