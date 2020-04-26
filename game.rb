@@ -13,7 +13,7 @@ class Game
     attr_accessor :player1, :player2, :turn
 
     def initialize
-        @board = Board.new()
+        @board = Board.new
         @player1 = Player.new("Player 1", :white)
         @player2 = Player.new("Player 2", :black)
         @turn = @player1
