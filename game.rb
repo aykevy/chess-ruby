@@ -80,7 +80,6 @@ class Game
         else
             return ["Continue"]
         end
-        info_updates 
     end
 
     #Moves the piece from start to destination.
@@ -107,16 +106,6 @@ class Game
             puts "INVALID MOVE!"
             puts
         end
-    end
-
-    #Makes a move that promotes the pawn.
-    def promotion_move(s, d)
-        p_row, p_col = s
-        get_promo = prompt_promotion
-        promotion = [@board.rows[p_row][p_col].color, get_promo]
-        #Check for valid input later
-        @board.move_piece(s, d, promotion)
-        change_turn #NEW
     end
 
     #Helper function that does the castling.
@@ -164,7 +153,6 @@ class Game
     def get_enpassant_positions
         previous = @board.moves_list.last
         if previous.length == 2 #Length can be 3 for promotions.
-            
             s, d = previous
             start_r, start_c = s
             dest_r, dest_c = d
@@ -177,7 +165,6 @@ class Game
                 moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
                 return moves.select { | row, col = move | col >= 0 && col <= 7 }
             end
-
         end
         []
     end
@@ -188,18 +175,38 @@ class Game
         @turn.color == :white ? [prev_r - 1, prev_c] : [prev_r + 1, prev_c]
     end
 
+    def do_enpassant(s, d)
+        _, prev_dest = @board.moves_list.last
+        prev_r, prev_c = prev_dest
+        @board.rows[prev_r][prev_c] = NullPiece.new(:color, @board, [prev_r, prev_c])
+        puts "VALID MOVE!"
+        puts
+        @board.move_piece(s, d)
+        change_turn #NEW
+    end
+
+    #Makes a move that promotes the pawn.
+    def do_promotion(s, d)
+        p_row, p_col = s
+        get_promo = prompt_promotion
+        promotion = [@board.rows[p_row][p_col].color, get_promo]
+        #Check for valid input later
+        @board.move_piece(s, d, promotion)
+        change_turn #NEW
+    end
+
     def pawn_move(s, d)
         #Piece color and stuff should already be checked for in move selection, 
         #so only worry about if your pawns positions are included in enpassant move list.
 
         pos_that_can_enpass = get_enpassant_positions
+        enpass_dest = get_enpassant_destination
 
         if [0, 7].include?(d[0])
-            promotion_move(s, d)
+            do_promotion(s, d)
 
-        elsif pos_that_can_enpass.include?(s)
-
-            enpassant_move(s, get_enpassant_destination)
+        elsif pos_that_can_enpass.include?(s) && d == enpass_dest
+            do_enpassant(s, d)
 
         else
             normal_move(s, d)

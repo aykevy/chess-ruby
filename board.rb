@@ -173,7 +173,7 @@ class Board
         valid_moves = get_all_legal_moves(start)
         #Uncomment if you want to see where the valid destinations are for a move.
         #puts
-        #print "Valid destinations: #{valid_moves}"
+        #print "Valid normal move (no castle/enpassant) destinations: #{valid_moves}"
         #puts
         valid_moves.include?(dest)
     end
