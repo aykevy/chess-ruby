@@ -64,7 +64,6 @@ module Display
         else
             puts "White Castle Destination: #{white_castle_moves}"
         end
-
         if black_castle_moves.empty?
             puts "Black Castle Destination: None"
         else
