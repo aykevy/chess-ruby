@@ -257,11 +257,8 @@ class Game
             white_castle_moves, in_check_white, white_exit_moves = king_info(white_king)
             black_castle_moves, in_check_black, black_exit_moves = king_info(black_king)
 
-            #Print Interface (Can comment out everything but the board to remove trackers)
-            print_turn(@turn)
-            print_castle_moves(white_castle_moves, black_castle_moves)
-            print_enpassant_moves(get_enpassant_positions)
-            print_board(@board.rows)
+            #Print Interface (Can remove trackers by running individual functions from display)
+            print_tracker_and_board(@turn, white_castle_moves, black_castle_moves, get_enpassant_positions, @board.rows)
            
             #Make moves depending on turn.
             if @turn.color == :white
@@ -280,7 +277,7 @@ class Game
             end
             
         end
-        
+
     end
 
 end

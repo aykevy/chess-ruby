@@ -93,4 +93,12 @@ module Display
         puts
     end
 
+    #This will print everything above.
+    def print_tracker_and_board(turn, white_castle_moves, black_castle_moves, get_enpassant_positions, board_rows)
+        print_turn(turn)
+        print_castle_moves(white_castle_moves, black_castle_moves)
+        print_enpassant_moves(get_enpassant_positions)
+        print_board(board_rows)
+    end
+
 end
