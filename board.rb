@@ -172,10 +172,61 @@ class Board
     def valid_move?(start, dest)
         valid_moves = get_all_legal_moves(start)
         #Uncomment if you want to see where the valid destinations are for a move.
-        puts
-        print "Valid destinations: #{valid_moves}"
-        puts
+        #puts
+        #print "Valid destinations: #{valid_moves}"
+        #puts
         valid_moves.include?(dest)
+    end
+
+    def normal_placement(start_pos, end_pos)
+        @moves_list << [start_pos, end_pos]
+        r1, c1 = start_pos
+        r2, c2 = end_pos
+
+        piece_color = @rows[r1][c1].color
+        piece_type = @rows[r1][c1].symbol
+
+        @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
+
+        case piece_type
+        when :pawn
+            @rows[r2][c2] = Pawn.new(piece_color, self, [r2, c2])
+        when :rook, :bishop, :queen
+            @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
+        when :knight, :king
+            @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
+        end
+        @rows[r2][c2].set_symbol(piece_type)
+        @rows[r2][c2].moved = true
+    end
+
+    def promotion_placement(start_pos, end_pos, promotion)
+        @moves_list << [start_pos, end_pos, promotion]
+        r1, c1 = start_pos
+        r2, c2 = end_pos
+
+        piece_color, desired_promo = promotion
+        @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
+
+        case desired_promo
+        when "q"
+            @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
+            @rows[r2][c2].set_symbol(:queen)
+            @rows[r2][c2].moved = true
+        when "r"
+            @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
+            @rows[r2][c2].set_symbol(:rook)
+            @rows[r2][c2].moved = true 
+        when "b"
+            @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
+            @rows[r2][c2].set_symbol(:bishop)
+            @rows[r2][c2].moved = true 
+        when "n"
+            @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
+            @rows[r2][c2].set_symbol(:knight)
+            @rows[r2][c2].moved = true 
+        end
+        
     end
 
     #This function just moves one piece at the a given start position to
@@ -185,52 +236,10 @@ class Board
     def move_piece(start_pos, end_pos, promotion = nil)
 
         if promotion.nil?
-            @moves_list << [start_pos, end_pos]
-            r1, c1 = start_pos
-            r2, c2 = end_pos
-
-            piece_color = @rows[r1][c1].color
-            piece_type = @rows[r1][c1].symbol
-
-            @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
-
-            case piece_type
-            when :pawn
-                @rows[r2][c2] = Pawn.new(piece_color, self, [r2, c2])
-            when :rook, :bishop, :queen
-                @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
-            when :knight, :king
-                @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
-            end
-            @rows[r2][c2].set_symbol(piece_type)
-            @rows[r2][c2].moved = true
+            normal_placement(start_pos, end_pos)
 
         else
-            @moves_list << [start_pos, end_pos, promotion]
-            r1, c1 = start_pos
-            r2, c2 = end_pos
-
-            piece_color, desired_promo = promotion
-            @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
-
-            case desired_promo
-            when "q"
-                @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
-                @rows[r2][c2].set_symbol(:queen)
-                @rows[r2][c2].moved = true
-            when "r"
-                @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
-                @rows[r2][c2].set_symbol(:rook)
-                @rows[r2][c2].moved = true 
-            when "b"
-                @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])
-                @rows[r2][c2].set_symbol(:bishop)
-                @rows[r2][c2].moved = true 
-            when "n"
-                @rows[r2][c2] = SteppingPiece.new(piece_color, self, [r2, c2])
-                @rows[r2][c2].set_symbol(:knight)
-                @rows[r2][c2].moved = true 
-            end
+            
 
         end
     end

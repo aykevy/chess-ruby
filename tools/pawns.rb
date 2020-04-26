@@ -4,10 +4,9 @@ require_relative "board_modules/display_module"
 class Pawn < Piece
     include Display
 
-    attr_accessor :can_enpassant, :moved
+    attr_accessor :moved
     def initialize(color, board, pos)
         super
-        @can_enpassant = false
         @moved = false
     end
 
@@ -29,13 +28,6 @@ class Pawn < Piece
     def opposite_color?(pos)
         x, y = pos
         @board.rows[x][y].color != @color
-    end
-
-    def enpassant
-        #This rule only applies when there are adjacent pawns of the opposite color and they have
-        #chosen to do the two step forward move.
-        puts "Enpassant"
-
     end
 
     def two_step_forward

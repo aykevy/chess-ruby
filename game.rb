@@ -19,10 +19,12 @@ class Game
         @turn = @player1
     end
 
+    #Changes the player turn.
     def change_turn
         @turn = @turn.color == :white ? @player2 : @player1
     end
 
+    #Gets the kings on the board.
     def get_kings
         white = []
         black = []
@@ -36,6 +38,7 @@ class Game
         [white, black]
     end
 
+    #Generates information for a king before testing for checks and validation.
     def king_info(king)
         castle_moves = king.castle
         in_check = false
@@ -43,20 +46,50 @@ class Game
         [castle_moves, in_check, exit_moves]
     end
 
+    #Checks if the position is king.
     def is_king?(pos)
         row, col = pos
         @board.rows[row][col].symbol == :king
     end
 
+    #Checks if the position is pawn.
     def is_pawn?(pos)
         row, col = pos
         @board.rows[row][col].symbol == :pawn
     end
 
+    #Checks if the position is null.
     def is_null?(pos)
         !@board.piece?(pos)
     end
 
+    #Checks if the current turn is in checkmate or stalemate.
+    #Case 1: If in check, return [true, check_exits]
+    #Case 2: If in checkmate, return ["Done"]
+    #Case 3: If in stalemate, return ["Done"]
+    #Case 4: If none above, return ["Continue"]
+    def checkmate_or_stalemate?(king)
+        info_updates = []
+        opposite_color = king.color == :white ? :black : :white
+        if @board.check(king.pos)
+            puts "Check, #{king.color} king in check."
+            check_exits = @board.checkmate_exit(king)
+            if check_exits.empty?
+                puts "Checkmate, #{opposite_color} wins!"
+                info_updates = ["Done"]
+            else
+                info_updates = [true, check_exits]
+            end
+        elsif @board.stalemate(king.color)
+            puts "Stalemate, #{king.color} has no legal moves."
+            info_updates = ["Done"]
+        else
+            info_updates = ["Continue"]
+        end
+        info_updates 
+    end
+
+    #Moves the piece from start to destination.
     def normal_move(s, d)
         if @board.valid_move?(s, d)
             puts "VALID MOVE!"
@@ -69,6 +102,7 @@ class Game
         end
     end
 
+    #Makes a move that gets the king out of check.
     def check_move(s, d, exit_moves)
         if exit_moves.include?([s, d])
             puts "VALID MOVE!"
@@ -81,6 +115,7 @@ class Game
         end
     end
 
+    #Makes a move that promotes the pawn.
     def promotion_move(s, d)
         p_row, p_col = s
         get_promo = prompt_promotion
@@ -90,6 +125,7 @@ class Game
         change_turn #NEW
     end
 
+    #Helper function that does the castling.
     def do_castle(king_pos, king_dest)
         case king_dest
         when [7, 2]
@@ -111,6 +147,7 @@ class Game
         end
     end
 
+    #Gives the king the option to do a normal move or castle.
     def king_move(s, d, castle_move_list)
         if @board.valid_move?(s, d) || castle_move_list.include?(d)
             if castle_move_list.include?(d)
@@ -130,29 +167,36 @@ class Game
         end
     end
 
-    #Case 1: If in check, return [true, check_exits]
-    #Case 2: If in checkmate, return ["Done"]
-    #Case 3: If in stalemate, return ["Done"]
-    #Case 4: If none above, return ["Continue"]
-    def checkmate_or_stalemate?(king)
-        info_updates = []
-        opposite_color = king.color == :white ? :black : :white
-        if @board.check(king.pos)
-            puts "Check, #{king.color} king in check. Resolve check first."
-            check_exits = @board.checkmate_exit(king)
-            if check_exits.empty?
-                puts "Checkmate, #{opposite_color} wins!"
-                info_updates = ["Done"]
-            else
-                info_updates = [true, check_exits]
+
+    def do_enpassant
+        previous = @board.moves_list.last
+        if previous.length == 2 #Length can be 3 for promotions.
+            s, d = previous
+            start_r, start_c = s
+            dest_r, dest_c = d
+
+            piece = @board.rows[dest_r][dest_c]
+
+            if piece.symbol == :pawn
+                if start_r == 1 && dest_r == 3 && start_c == dest_c
+                    puts "HE MOVED TWO FORWARD (BLACK)"
+                    moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
+                    can_passant = moves.select { | row, col = move | col >= 0 && col <= 7 }
+                    puts
+                    print can_passant
+                    puts
+
+                elsif start_r == 6 && dest_r == 4 && start_c == dest_c
+                    puts "HE MOVED TWO FORWARD (WHITE)"
+                    moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
+                    can_passant = moves.select { | row, col = move | col >= 0 && col <= 7 }
+                    puts
+                    print can_passant
+                    puts
+                end
             end
-        elsif @board.stalemate(king.color)
-            puts "Stalemate, #{king.color} has no legal moves."
-            info_updates = ["Done"]
-        else
-            info_updates = ["Continue"]
+
         end
-        info_updates 
     end
 
     def move_selection(s, d, in_check, exit_moves, castle_moves)
@@ -173,44 +217,37 @@ class Game
         end
     end
 
-
     def play
-
         #Simulations test place here:
         simulation_7(@board)
-
         while true
+            puts do_enpassant
 
             #Set up king informations on both sides
-            #--------------------------------------
             white_king, black_king = self.get_kings
             white_castle_moves, in_check_white, white_exit_moves = king_info(white_king)
             black_castle_moves, in_check_black, black_exit_moves = king_info(black_king)
 
+            #Print Interface
             print_turn(@turn)
             print_castle_moves(white_castle_moves, black_castle_moves)
             print_board(@board.rows)
-            #--------------------------------------
-
+           
+            #Make moves depending on turn.
             if @turn.color == :white
                 w_update = checkmate_or_stalemate?(white_king)
                 break if w_update.length == 1 && w_update.first == "Done"
                 in_check_white, white_exit_moves = w_update if w_update.length == 2
+                s, d = prompt_move
+                move_selection(s, d, in_check_white, white_exit_moves, white_castle_moves)
+
             else
                 b_update = checkmate_or_stalemate?(black_king)
                 break if b_update.length == 1 && b_update.first == "Done"
                 in_check_black, black_exit_moves = b_update if b_update.length == 2
-            end
-
-            #Actual Move Making
-            s, d = prompt_move
-
-            if @turn.color == :white
-                move_selection(s, d, in_check_white, white_exit_moves, white_castle_moves)
-            else
+                s, d = prompt_move
                 move_selection(s, d, in_check_black, black_exit_moves, black_castle_moves)
             end
-
         end
     end
 
