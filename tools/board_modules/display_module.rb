@@ -11,7 +11,7 @@ module Display
         puts "Trackers^"
         puts
         puts
-        puts 
+        puts
         puts "Chess Game"
         puts "----------------------------------"
         puts "============The Board============="
@@ -55,6 +55,7 @@ module Display
         end
     end
 
+    #Given a set of white and black castling moves, this will print the destinations.
     def print_castle_moves(white_castle_moves, black_castle_moves)
         puts "==========Castle Tracker=========="
         puts
@@ -73,6 +74,7 @@ module Display
         puts
     end
 
+    #This will print the current player's turn.
     def print_turn(turn)
         puts "===========Turn Tracker==========="
         puts
@@ -81,6 +83,7 @@ module Display
         puts
     end
 
+    #This will print the positions that can enpassant.
     def print_enpassant_moves(enpassant_moves)
         puts "========Enpassant Tracker========="
         puts

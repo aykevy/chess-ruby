@@ -1,7 +1,7 @@
 #This module gets you all the positions of every direction on the board
 #relative to the piece. It does not check for valid or invalid positions nor does
 #it check for blocked positions, it simply returns all possible placements on the 
-#board for bishops, rooks, and queens.
+#board for bishops, rooks, and queens based on given position.
 
 module Slideable
 

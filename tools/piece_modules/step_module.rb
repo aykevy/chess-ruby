@@ -1,12 +1,12 @@
 #This module gets you all the positions of every direction on the board
 #relative to the piece. It does not check for valid or invalid positions nor does
 #it check for blocked positions, it simply returns all possible placements on the 
-#board for knights and kings.
+#board for knights and kings based on given position.
 
 module Stepable
 
     #Gets you all positions on the board from the given position depending on 
-    #whether its a knight or king.
+    #whether it is a knight or king.
     def moves(pos, symbol)
         x, y = pos
         directions = []

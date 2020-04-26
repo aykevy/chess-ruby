@@ -150,6 +150,8 @@ class Game
         end
     end
 
+    #Gets the positions on the board of pieces that can enpassant (does not
+    #check for validity, just gives positions)
     def get_enpassant_positions
         previous = @board.moves_list.last
         if previous.length == 2 #Length can be 3 for promotions.
@@ -169,12 +171,14 @@ class Game
         []
     end
 
+    #Gets the destination of the move where a pawn will go to after doing enpassant.
     def get_enpassant_destination
         _, prev_dest = @board.moves_list.last
         prev_r, prev_c = prev_dest
         @turn.color == :white ? [prev_r - 1, prev_c] : [prev_r + 1, prev_c]
     end
 
+    #Helper function that does the enpassant.
     def do_enpassant(s, d)
         _, prev_dest = @board.moves_list.last
         prev_r, prev_c = prev_dest
@@ -185,7 +189,7 @@ class Game
         change_turn #NEW
     end
 
-    #Makes a move that promotes the pawn.
+    #Helper function that promotes the pawn.
     def do_promotion(s, d)
         p_row, p_col = s
         get_promo = prompt_promotion
@@ -195,24 +199,22 @@ class Game
         change_turn #NEW
     end
 
+    #Gives the pawn the option to do a promotion, enpassant, or normal move.
+    #Piece color should already be checked for in move selection, so only
+    #worry about if your pawns positions are included in enpassant move list.
     def pawn_move(s, d)
-        #Piece color and stuff should already be checked for in move selection, 
-        #so only worry about if your pawns positions are included in enpassant move list.
-
         pos_that_can_enpass = get_enpassant_positions
         enpass_dest = get_enpassant_destination
-
         if [0, 7].include?(d[0])
             do_promotion(s, d)
-
         elsif pos_that_can_enpass.include?(s) && d == enpass_dest
             do_enpassant(s, d)
-
         else
             normal_move(s, d)
         end
     end
 
+    #This is the move selection list.
     def move_selection(s, d, in_check, exit_moves, castle_moves)
         if @board.rows[s[0]][s[1]].color != @turn.color
             puts "That is not your piece or it is a empty space!"
@@ -231,7 +233,9 @@ class Game
         end
     end
 
+    #This is the game loop that continues until checkmate or draws.
     def play
+
         #Simulations test place here:
         simulation_7(@board)
         while true
@@ -262,6 +266,7 @@ class Game
                 s, d = prompt_move
                 move_selection(s, d, in_check_black, black_exit_moves, black_castle_moves)
             end
+            
         end
     end
 

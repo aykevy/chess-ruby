@@ -1,6 +1,5 @@
 #This module is used for giving us different prompts to the user depending on the
-#situation such as pawn promotion and asking for moves. It is also a place to
-#put any functions that will print messages.
+#situation such as pawn promotion and asking for moves.
 
 module Prompt
 

@@ -1,3 +1,6 @@
+#This module is mainly used to create test cases. By simulating the board before
+#manually making the moves, it makes things easier to test.
+
 module Simulation
 
     #Test 1:
@@ -15,8 +18,8 @@ module Simulation
     end
 
     #Test 2:
-    #Another piece of the kings color can capture a piece that is currently
-    #checking the king if the king can't check.
+    #Another piece of the king's color can capture a piece that is currently
+    #checking the king if the king can't escape or capture.
     def simulation_2(board)
         simulate_intro = [
             [[1, 3], [2, 3]], [[2, 3], [3, 3]], [[6, 3], [5, 3]], 
@@ -30,7 +33,7 @@ module Simulation
     end
 
     #Test 3:
-    #Another simulation to show that you can capture with a king or just capture
+    #Another simulation to show that you can capture with the king himself or capture
     #with another piece when in check.
     def simulation_3(board)
         simulate_intro = [
@@ -44,10 +47,8 @@ module Simulation
         end
     end
 
-    #Test 4
-    #Another simulation with just two kings left and a pawn. This is to remove the
-    #king shit
-
+    #Test 4:
+    #Another simulation with just two kings left and a pawn.
     def simulation_4(board)
         simulate_intro = [
             [[1, 3], [2, 3]], [[2, 3], [3, 3]], [[6, 3], [5, 3]], 
@@ -60,8 +61,8 @@ module Simulation
         end
     end
 
-    #Test 5
-    #Another simulation to show that you can block to protect the king in check
+    #Test 5:
+    #Another simulation to show that you can block to protect the king in check.
     def simulation_5(board)
         simulate_intro = [
             [[1, 3], [2, 3]], [[2, 3], [3, 3]], [[6, 3], [5, 3]], 
@@ -74,7 +75,8 @@ module Simulation
         end
     end
 
-    #Test 6 Castling
+    #Test 6:
+    #Sets the board up and allows you to make a castling move.
     def simulation_6(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
@@ -88,7 +90,8 @@ module Simulation
         end
     end
 
-    #Test 7 Castling works if theres a piece checking through a pathway where
+    #Test 7:
+    #Castling works if there is a piece checking through a pathway where
     #the king is not passing through, this is the edge case for where there are
     #three empty spaces between king and rook on the left of the board. The most
     #left empty space does not have to check for checks as only the rook will 
@@ -110,7 +113,8 @@ module Simulation
         end
     end
 
-    #Test 8: After castling create a check
+    #Test 8:
+    #Sets up board before you can do a castle to cause other king to be in check.
     def simulation_8(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
@@ -129,7 +133,8 @@ module Simulation
         end
     end
     
-    #Test 9: Stalemate
+    #Test 9:
+    #This is to setup for testing stalemate.
     def simulation_9(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
@@ -158,7 +163,8 @@ module Simulation
         end
     end
 
-    #Test 10: Should not cause your own colored king to be in check if you do a move.
+    #Test 10
+    #Should not cause your own colored king to be in check if you do a move.
     def simulation_10(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 

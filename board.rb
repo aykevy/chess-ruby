@@ -41,7 +41,7 @@ class Board
         end
     end
 
-    #This function gets you the kings location of the given color.
+    #This function gets you the a king's location based on the given color.
     def kings_location(color)
         @rows.each do | row |
             row.each do | piece |
@@ -51,7 +51,7 @@ class Board
     end
 
     #Will check if the current position is part of the piece class and check if
-    #it's also not part of the nullpiece class.
+    #it is also not a empty space.
     def piece?(pos)
         x, y = pos
         @rows[x][y].is_a?(Piece) && !@rows[x][y].is_a?(NullPiece)
@@ -78,7 +78,6 @@ class Board
         valid = [] #[ [[start_row, start_col], [dest_row, dest_col]], ... , etc. ] 
         moves = piece.get_moves
         moves.each_with_index do | move, idx |
-
             dup_board = copy
             dup_piece = piece.copy(piece.color, dup_board, move, piece.symbol)
 
@@ -93,9 +92,14 @@ class Board
             else
                 valid << [[r1, c1], move] unless dup_board.check(king_pos)
             end
-
         end
         valid
+    end
+
+    #TODO! Similar to check_valid_moves gotta pass in an extra location to null.
+    #and promo. only have to do once. no bullshit, no loops, no get moves.
+    def check_valid_moves_enpassant_promo
+        puts "hi"
     end
 
     #This function checks if the king can move away to a safe position or can
@@ -139,6 +143,8 @@ class Board
         valid_moves
     end
 
+    #This function will return whether or not the current turn is in stalemate.
+    #If a piece has no legal moves and not in check, then its stalemate.
     def stalemate(color)
         count = 0
         @rows.each do | row |
@@ -149,7 +155,7 @@ class Board
                 end
             end
         end
-        count == 0 #If a piece has no legal moves and not in check, then its stalemate.
+        count == 0
     end
 
     #This function returns a set of destinations after going through a bunch of
@@ -162,7 +168,7 @@ class Board
             after_check = check_valid_moves(piece, king_pos).map { | start, dest| dest }
             return after_check
         else
-            #We don't add a king_pos cause were checking the kings position
+            #We don't add a king_pos cause we're checking the king position
             #itself after it moves.
             return check_valid_moves(piece).map { | start, dest| dest }
         end
@@ -178,6 +184,7 @@ class Board
         valid_moves.include?(dest)
     end
 
+    #Does normal board movement from start to destination.
     def normal_placement(start_pos, end_pos)
         @moves_list << [start_pos, end_pos]
         r1, c1 = start_pos
@@ -200,6 +207,7 @@ class Board
         @rows[r2][c2].moved = true
     end
 
+    #Does board movement for promotions of the pawn.
     def promotion_placement(start_pos, end_pos, promotion)
         @moves_list << [start_pos, end_pos, promotion]
         r1, c1 = start_pos
@@ -240,4 +248,5 @@ class Board
             promotion_placement(start_pos, end_pos, promotion)
         end
     end
+
 end
