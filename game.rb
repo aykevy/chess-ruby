@@ -141,7 +141,7 @@ class Game
     end
 
     #Gets the positions on the board of pieces that can enpassant (does not
-    #check for validity, just gives positions)
+    #check for validity, just gives positions).
     def get_enpassant_positions
         previous = @board.moves_list.last
         if previous.length == 2 #Length can be 3 for promotions.
@@ -187,25 +187,13 @@ class Game
         end
     end
 
+    #Gets the valid positions to where the pawn can promote.
     def get_valid_promotion_positions(s)
-        #This is for when the pawn is row 6 and 1
         row, col = s
         piece = @board.rows[row][col]
         get_positions = piece.get_moves
-        the_king = get_kings.select { | king_piece | king_piece.color == @turn.color }
-        king_pos = the_king.first.pos
-
-        puts "gets positions#{get_positions}"
-        get_positions.select do | move |
-            valid = @board.check_valid_pawn_special?(move, piece, king_pos)
-            if valid == true
-                puts "won't put kign in check:"
-            else
-                puts "that will put the kign in check"
-            end
-            valid
-        end
-        
+        king_pos = get_kings.select { | king_piece | king_piece.color == @turn.color }.first.pos
+        get_positions.select { | move | @board.check_valid_pawn_special?(move, piece, king_pos) }
     end
 
     #Helper function that promotes the pawn.
