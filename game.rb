@@ -275,7 +275,7 @@ class Game
     def play
 
         #Simulations test place here:
-        simulation_7(@board)
+        simulation_12(@board)
         while true
 
             #Set up king informations on both sides.

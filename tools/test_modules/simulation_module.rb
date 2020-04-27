@@ -229,4 +229,12 @@ module Simulation
         end
     end
 
+    # more stalemates?
+
+    #insufficient material
+
+    #two step forward to protect king 
+
+    #enpassant to get king out of check or checkmate
+
 end
