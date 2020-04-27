@@ -18,7 +18,7 @@ class Play
     #This is the game loop that continues until checkmate or draws.
     def play
         #Simulations test place here:
-        simulation_12(@game.board)
+        simulation_14(@game.board)
 
         while true
             

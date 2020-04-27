@@ -77,23 +77,21 @@ class Board
     #do not need require the king_pos. Returns a list of valid moves.
     def check_valid_moves(piece, king_pos = nil)
         valid = [] #[ [[start_row, start_col], [dest_row, dest_col]], ... , etc. ]
-        unless piece.is_a?(Pawn) && piece.pos[0] == 7
-            moves = piece.get_moves
-            moves.each_with_index do | move, idx |
-                dup_board = copy
-                dup_piece = piece.copy(piece.color, dup_board, move, piece.symbol)
+        moves = piece.get_moves
+        moves.each_with_index do | move, idx |
+            dup_board = copy
+            dup_piece = piece.copy(piece.color, dup_board, move, piece.symbol)
 
-                r1, c1 = piece.pos
-                r2, c2 = move
+            r1, c1 = piece.pos
+            r2, c2 = move
 
-                dup_board.rows[r2][c2] = dup_piece
-                dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
+            dup_board.rows[r2][c2] = dup_piece
+            dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
 
-                if king_pos.nil?
-                    valid << [[r1, c1], move] unless dup_board.check(move)
-                else
-                    valid << [[r1, c1], move] unless dup_board.check(king_pos)
-                end
+            if king_pos.nil?
+                valid << [[r1, c1], move] unless dup_board.check(move)
+            else
+                valid << [[r1, c1], move] unless dup_board.check(king_pos)
             end
         end
         valid
@@ -225,6 +223,7 @@ class Board
         end
         @rows[r2][c2].set_symbol(piece_type)
         @rows[r2][c2].moved = true
+
     end
 
     #Does board movement for promotions of the pawn.

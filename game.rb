@@ -1,10 +1,12 @@
 require_relative "board"
 require_relative "tools/player"
 require_relative "tools/board_modules/prompt_module"
+require_relative "tools/board_modules/display_module"
 
 class Game
 
     include Prompt
+    include Display
 
     attr_accessor :board, :player1, :player2, :turn
 
@@ -18,6 +20,11 @@ class Game
     #Changes the player turn.
     def change_turn
         @turn = @turn.color == :white ? @player2 : @player1
+    end
+
+    #Gets opposite color of a piece.
+    def get_opposite_color(piece)
+        piece.color == :white ? :black : :white
     end
 
     #Gets the kings on the board.
@@ -60,22 +67,57 @@ class Game
     #Case 3: If in stalemate, return ["Done"]
     #Case 4: If none above, return ["Continue"]
     def checkmate_or_stalemate?(king)
-        opposite_color = king.color == :white ? :black : :white
+
+        #bug is here. after doing a check passant move
+        #to avoid check, there is a bug where u cant move anything except
+        #the piece that'll put black in check
+
         if @board.check(king.pos)
             puts "Check, #{king.color} king in check."
-            check_exits = @board.checkmate_exit(king) #if check exits is empty, do enpassant if avaialble
-            if check_exits.empty?
-                puts "Checkmate, #{opposite_color} wins!"
+            check_exits = @board.checkmate_exit(king)
+            check_enpassant_exits = check_enpassant_extra(king)
+
+            if check_exits.empty? && check_enpassant_exits.empty?
+                puts "Checkmate, #{get_opposite_color(king)} wins!"
                 return ["Done"]
             else
-                return [true, check_exits]
+                return [true, check_exits + check_enpassant_exits]
             end
+
         elsif @board.stalemate(king.color)
             puts "Stalemate, #{king.color} has no legal moves."
             return ["Done"]
+
         else
             return ["Continue"]
+
         end
+    end
+
+    def check_enpassant_extra(king)
+        valid = []
+        enpass_pos = get_enpassant_positions
+
+        unless enpass_pos.empty?
+            _, prev_dest = @board.moves_list.last
+            enpass_dest = get_enpassant_destination
+            @board.rows.each do | row |
+                row.each do | piece |
+                    if piece.symbol == :pawn && piece.color == king.color && enpass_pos.include?(piece.pos)
+                        if @board.check_valid_pawn_special?(enpass_dest, piece, king.pos, prev_dest)
+                            valid << [piece.pos, enpass_dest]
+                        end
+                    end
+                end
+            end
+        end
+
+        unless valid.empty?
+            puts "Not yet checkmated or stalemated, possible moves by the king to: \n"
+            print_moves(valid)
+        end
+
+        valid
     end
 
     #Moves the piece from start to destination.
@@ -92,9 +134,13 @@ class Game
     #Makes a move that gets the king out of check.
     def check_move(s, d, exit_moves)
         if exit_moves.include?([s, d])
-            puts "VALID MOVE!\n\n"
-            @board.move_piece(s, d)
-            change_turn
+            if  get_enpassant_positions.include?(s) && d == get_enpassant_destination
+                do_enpassant(s, d)
+            else
+                puts "VALID MOVE!\n\n"
+                @board.move_piece(s, d)
+                change_turn
+            end
         else
             puts "INVALID MOVE!\n\n"
         end
@@ -178,9 +224,10 @@ class Game
         prev_r, prev_c = prev_dest
 
         if @board.check_valid_pawn_special?(d, current_piece, king_pos, prev_dest)
-            @board.rows[prev_r][prev_c] = NullPiece.new(:color, @board, [prev_r, prev_c])
+            #new
             puts "VALID ENPASSANT MOVE!\n\n"
-            @board.move_piece(s, d)
+            @board.move_piece(s, prev_dest)
+            @board.move_piece(prev_dest, d)
             change_turn
         else
             puts "INVALID MOVE! That enpassant will check your king.\n\n"
