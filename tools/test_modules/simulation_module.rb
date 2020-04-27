@@ -237,4 +237,6 @@ module Simulation
 
     #enpassant to get king out of check or checkmate
 
+    #show that promotion pawn capture piece will king out of check
+
 end
