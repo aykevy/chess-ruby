@@ -85,26 +85,22 @@ class Game
     #Moves the piece from start to destination.
     def normal_move(s, d)
         if @board.valid_move?(s, d)
-            puts "VALID MOVE!"
-            puts
+            puts "VALID MOVE!\n\n"
             @board.move_piece(s, d)
             change_turn
         else
-            puts "INVALID MOVE!"
-            puts
+            puts "INVALID MOVE!\n\n"
         end
     end
 
     #Makes a move that gets the king out of check.
     def check_move(s, d, exit_moves)
         if exit_moves.include?([s, d])
-            puts "VALID MOVE!"
-            puts
+            puts "VALID MOVE!\n\n"
             @board.move_piece(s, d)
             change_turn
         else
-            puts "INVALID MOVE!"
-            puts
+            puts "INVALID MOVE!\n\n"
         end
     end
 
@@ -134,19 +130,17 @@ class Game
     def king_move(s, d, castle_move_list)
         if @board.valid_move?(s, d) || castle_move_list.include?(d)
             if castle_move_list.include?(d)
-                puts "VALID CASTLE MOVE!"
-                puts
+                puts "VALID CASTLE MOVE!\n\n"
                 do_castle(s, d)
                 change_turn
             else
-                puts "VALID MOVE!"
+                puts "VALID MOVE!\n\n"
                 puts
                 @board.move_piece(s, d)
                 change_turn
             end
         else
-            puts "INVALID MOVE!"
-            puts
+            puts "INVALID MOVE!\n\n"
         end
     end
 
@@ -189,13 +183,11 @@ class Game
 
         if @board.check_valid_pawn_special?(d, current_piece, king_pos, prev_dest)
             @board.rows[prev_r][prev_c] = NullPiece.new(:color, @board, [prev_r, prev_c])
-            puts "VALID ENPASSANT MOVE!"
-            puts
+            puts "VALID ENPASSANT MOVE!\n\n"
             @board.move_piece(s, d)
             change_turn
         else
-            puts "INVALID MOVE! That enpassant will check your king."
-            puts
+            puts "INVALID MOVE! That enpassant will check your king.\n\n"
         end
     end
 
@@ -226,10 +218,13 @@ class Game
         if valid.include?(d)
             p_row, p_col = s
             get_promo = prompt_promotion
-            promotion = [@board.rows[p_row][p_col].color, get_promo]
-            #Check for valid input later
-            @board.move_piece(s, d, promotion)
-            change_turn #NEW
+            if ["q", "r", "b", "n"].include?(get_promo)
+                promotion = [@board.rows[p_row][p_col].color, get_promo]
+                @board.move_piece(s, d, promotion)
+                change_turn #NEW
+            else
+                puts "INVALID PIECE CHOICE!"
+            end
         else
             puts "INVALID PROMO MOVE, ONLY: #{valid}"
         end
@@ -253,9 +248,7 @@ class Game
     #This is the move selection list.
     def move_selection(s, d, in_check, exit_moves, castle_moves)
         if @board.rows[s[0]][s[1]].color != @turn.color
-            puts "That is not your piece or it is a empty space!"
-            puts
-            puts
+            puts "That is not your piece or it is a empty space!\n\n"
         else
             if in_check
                 check_move(s, d, exit_moves)
@@ -276,6 +269,7 @@ class Game
 
         #Simulations test place here:
         simulation_12(@board)
+
         while true
 
             #Set up king informations on both sides.
