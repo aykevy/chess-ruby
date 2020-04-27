@@ -75,22 +75,25 @@ class Board
     #by default because you may want to check valid moves on a king piece so you
     #do not need require the king_pos.
     def check_valid_moves(piece, king_pos = nil)
-        valid = [] #[ [[start_row, start_col], [dest_row, dest_col]], ... , etc. ] 
-        moves = piece.get_moves
-        moves.each_with_index do | move, idx |
-            dup_board = copy
-            dup_piece = piece.copy(piece.color, dup_board, move, piece.symbol)
+        valid = [] #[ [[start_row, start_col], [dest_row, dest_col]], ... , etc. ]
 
-            r1, c1 = piece.pos
-            r2, c2 = move
+        unless piece.is_a?(Pawn) && piece.pos[0] == 7
+            moves = piece.get_moves
+            moves.each_with_index do | move, idx |
+                dup_board = copy
+                dup_piece = piece.copy(piece.color, dup_board, move, piece.symbol)
 
-            dup_board.rows[r2][c2] = dup_piece
-            dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
+                r1, c1 = piece.pos
+                r2, c2 = move
 
-            if king_pos.nil?
-                valid << [[r1, c1], move] unless dup_board.check(move)
-            else
-                valid << [[r1, c1], move] unless dup_board.check(king_pos)
+                dup_board.rows[r2][c2] = dup_piece
+                dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
+
+                if king_pos.nil?
+                    valid << [[r1, c1], move] unless dup_board.check(move)
+                else
+                    valid << [[r1, c1], move] unless dup_board.check(king_pos)
+                end
             end
         end
         valid
@@ -98,23 +101,22 @@ class Board
 
     #TODO! Similar to check_valid_moves gotta pass in an extra location to null.
     #and promo. only have to do once. no bullshit, no loops, no get moves.
-    def check_valid_enpassant?(intended_move, piece, prev_dest, king_pos)
+    def check_valid_pawn_special?(intended_move, piece, king_pos, prev_dest = nil)
         dup_board = copy
         dup_piece = piece.copy(piece.color, dup_board, intended_move, piece.symbol)
 
         r1, c1 = piece.pos
         r2, c2 = intended_move
-        r3, c3 = prev_dest
 
         dup_board.rows[r2][c2] = dup_piece
         dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
-        dup_board.rows[r3][c3] = NullPiece.new(:color, dup_board, [r3, c3])
+
+        unless prev_dest.nil?
+            r3, c3 = prev_dest
+            dup_board.rows[r3][c3] = NullPiece.new(:color, dup_board, [r3, c3])
+        end
 
         dup_board.check(king_pos) ? false : true
-    end
-
-    #final
-    def check_valid_promotion
     end
 
     #This function checks if the king can move away to a safe position or can
@@ -193,9 +195,9 @@ class Board
     def valid_move?(start, dest)
         valid_moves = get_all_legal_moves(start)
         #Uncomment if you want to see where the valid destinations are for a move.
-        #puts
-        #print "Valid normal move (no castle/enpassant) destinations: #{valid_moves}"
-        #puts
+        puts
+        print "Valid normal move (no castle/enpassant) destinations: #{valid_moves}"
+        puts
         valid_moves.include?(dest)
     end
 

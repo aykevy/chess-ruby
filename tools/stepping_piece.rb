@@ -114,15 +114,6 @@ class SteppingPiece < Piece
         no_checks_currently ? no_attacks_on_castle_paths(can_castle) : []
     end
 
-    def set_symbol(s)
-        @symbol = s
-    end
-
-    def piece?(pos)
-        x, y = pos
-        @board.rows[x][y].is_a?(Piece) && !@board.rows[x][y].is_a?(NullPiece)
-    end
-
     def get_unblocked_moves(moves)
         result = []
         moves.each do | pos |
@@ -137,7 +128,7 @@ class SteppingPiece < Piece
     end
 
     def get_moves
-        possible_moves = moves(@pos, @symbol)
+        possible_moves = step_positions(@pos, @symbol)
         get_unblocked_moves(possible_moves)
     end
     

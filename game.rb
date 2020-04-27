@@ -187,9 +187,9 @@ class Game
         _, prev_dest = @board.moves_list.last
         prev_r, prev_c = prev_dest
 
-        if @board.check_valid_enpassant?(d, current_piece, prev_dest, king_pos)
+        if @board.check_valid_pawn_special?(d, current_piece, king_pos, prev_dest)
             @board.rows[prev_r][prev_c] = NullPiece.new(:color, @board, [prev_r, prev_c])
-            puts "VALID MOVE!"
+            puts "VALID ENPASSANT MOVE!"
             puts
             @board.move_piece(s, d)
             change_turn
@@ -249,7 +249,7 @@ class Game
     def play
 
         #Simulations test place here:
-        simulation_11(@board)
+        simulation_12(@board)
         while true
 
             #Set up king informations on both sides.

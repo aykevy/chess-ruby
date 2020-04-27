@@ -18,15 +18,6 @@ class SlidingPiece < Piece
         copy_piece
     end
 
-    def set_symbol(s)
-        @symbol = s
-    end
-
-    def piece?(pos)
-        x, y = pos
-        @board.rows[x][y].is_a?(Piece) && !@board.rows[x][y].is_a?(NullPiece)
-    end
-
     def get_unblocked_moves(direction)
         result = []
         direction.each do | pos |

@@ -7,7 +7,7 @@ module Stepable
 
     #Gets you all positions on the board from the given position depending on 
     #whether it is a knight or king.
-    def moves(pos, symbol)
+    def step_positions(pos, symbol)
         x, y = pos
         directions = []
         case symbol
