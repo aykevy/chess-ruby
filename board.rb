@@ -59,9 +59,10 @@ class Board
 
     #Will check if the given position is in check.
     def check(pos)
+        king_color = @rows[pos[0]][pos[1]].color #New
         @rows.each do | row |
             row.each do | piece |
-                if piece?(piece.pos)
+                if piece?(piece.pos) && piece.color != king_color
                     return true if piece.get_moves.include?(pos)
                 end
             end
@@ -167,8 +168,8 @@ class Board
         @rows.each do | row |
             row.each do | piece |
                 if piece.color == color
-                   moves = get_all_legal_moves(piece.pos)
-                   count += moves.length
+                    moves = get_all_legal_moves(piece.pos)
+                    count += moves.length
                 end
             end
         end

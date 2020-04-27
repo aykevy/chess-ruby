@@ -1,5 +1,4 @@
 require_relative "piece"
-require_relative "board_modules/display_module"
 
 class Pawn < Piece
 
@@ -31,7 +30,7 @@ class Pawn < Piece
         bounded = raw.select { | x, y = dir | x >= 0 && x <= 7 && y >= 0 && y <= 7 && !piece?([x,y]) }
     end
 
-    def get_moves #Tentative, lets add the fix
+    def get_moves
         #Last move in each array is a forward move, we will pop it later.
         dirs = @color == :white ? [[-1, -1], [-1, 1], [-1, 0]] : [[1, -1], [1, 1], [1, 0]]
         added = dirs.map { | x, y = dir | [x + @pos[0], y + @pos[1]] }

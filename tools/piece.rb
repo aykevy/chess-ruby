@@ -1,7 +1,4 @@
-require_relative "board_modules/display_module"
 class Piece
-    
-    include Display
 
     attr_accessor :color, :board, :pos, :symbol
 
@@ -20,9 +17,8 @@ class Piece
     #Determines if the position is a piece on the board and is not part of
     #the null class.
     def piece?(pos)
-        #print_board(@board.rows)
-         x, y = pos
-         @board.rows[x][y].is_a?(Piece) && !@board.rows[x][y].is_a?(NullPiece)
+        x, y = pos
+        @board.rows[x][y].is_a?(Piece) && !@board.rows[x][y].is_a?(NullPiece)
     end
 
     #Checks if the position is the opposite color.

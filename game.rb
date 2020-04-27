@@ -199,14 +199,40 @@ class Game
         end
     end
 
+    def get_valid_promotion_positions(s)
+        #This is for when the pawn is row 6 and 1
+        row, col = s
+        piece = @board.rows[row][col]
+        get_positions = piece.get_moves
+        the_king = get_kings.select { | king_piece | king_piece.color == @turn.color }
+        king_pos = the_king.first.pos
+
+        puts "gets positions#{get_positions}"
+        get_positions.select do | move |
+            valid = @board.check_valid_pawn_special?(move, piece, king_pos)
+            if valid == true
+                puts "won't put kign in check:"
+            else
+                puts "that will put the kign in check"
+            end
+            valid
+        end
+        
+    end
+
     #Helper function that promotes the pawn.
     def do_promotion(s, d)
-        p_row, p_col = s
-        get_promo = prompt_promotion
-        promotion = [@board.rows[p_row][p_col].color, get_promo]
-        #Check for valid input later
-        @board.move_piece(s, d, promotion)
-        change_turn #NEW
+        valid = get_valid_promotion_positions(s)
+        if valid.include?(d)
+            p_row, p_col = s
+            get_promo = prompt_promotion
+            promotion = [@board.rows[p_row][p_col].color, get_promo]
+            #Check for valid input later
+            @board.move_piece(s, d, promotion)
+            change_turn #NEW
+        else
+            puts "INVALID PROMO MOVE, ONLY: #{valid}"
+        end
     end
 
     #Gives the pawn the option to do a promotion, enpassant, or normal move.
@@ -249,7 +275,7 @@ class Game
     def play
 
         #Simulations test place here:
-        simulation_12(@board)
+        simulation_7(@board)
         while true
 
             #Set up king informations on both sides.
