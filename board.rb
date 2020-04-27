@@ -74,10 +74,9 @@ class Board
     #Given a piece, it will check to see if they have any valid moves and on
     #top of that have moves that won't affect a kings position. King_pos is nil
     #by default because you may want to check valid moves on a king piece so you
-    #do not need require the king_pos.
+    #do not need require the king_pos. Returns a list of valid moves.
     def check_valid_moves(piece, king_pos = nil)
         valid = [] #[ [[start_row, start_col], [dest_row, dest_col]], ... , etc. ]
-
         unless piece.is_a?(Pawn) && piece.pos[0] == 7
             moves = piece.get_moves
             moves.each_with_index do | move, idx |
@@ -100,8 +99,11 @@ class Board
         valid
     end
 
-    #TODO! Similar to check_valid_moves gotta pass in an extra location to null.
-    #and promo. only have to do once. no bullshit, no loops, no get moves.
+    #Similar to check_valid_moves, this only checks one move and they are special cases.
+    #If you are enpassanting, prev_dest will be used to delete an extra place on
+    #the board (the piece getting capture). Otherwise you'll be using this for promotion
+    #as well. The purpose of this function is to return true or false whether or not
+    #the king will be in check from doing these two moves.
     def check_valid_pawn_special?(intended_move, piece, king_pos, prev_dest = nil)
         dup_board = copy
         dup_piece = piece.copy(piece.color, dup_board, intended_move, piece.symbol)
@@ -252,7 +254,6 @@ class Board
             @rows[r2][c2].set_symbol(:knight)
             @rows[r2][c2].moved = true 
         end
-
     end
 
     #This function just moves one piece at the a given start position to
