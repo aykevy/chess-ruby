@@ -199,44 +199,47 @@ class Board
         both_on_w || both_on_b
     end
 
+    #The rules for insufficient_material
     def insufficient_rules(materials)
-        count = materials.values.flatten.length
+        count = materials.values.map { | v | v.length }.sum
         case count
         when 2
-            #King vs. King
-            puts 2
+            #King vs King
+            return true 
         when 3
-            #King & Bishop vs. King
-            #King & Knight vs. King
-            puts 3
+            #King & Knight vs King
+            if materials[:king].length == 2 && materials[:knight].length == 1
+                return true
+            #King & Bishop vs Knight
+            elsif materials[:king].length == 2 && materials[:bishop].length == 1
+                return true
+            end
         when 4
-            #King & Bishop Vs King & Bishop
-            #with Bishop's on same tile color/positions
-            puts 4
-        end
-
-    end
-
-    def insufficient_material
-        materials = { 
-            :king => [], 
-            :queen => [],
-            :knight => [],
-            :bishop => [],
-            :rook => [],
-            :pawn => [],
-        }
-
-        @rows.each do | row |
-            row.each do | piece |
-                #:color is the default for empty spaces.
-                materials[piece.symbol] << [piece.color] if piece.color != :color
+            #King & Bishop vs King & Bishop (Same Tile Bishops)
+            if materials[:king].length == 2 && materials[:bishop].length == 2
+                pos1, pos2 = materials[:bishop]
+                if @rows[pos1[0]][pos1[1]].color != @rows[pos2[0]][pos2[1]].color
+                    if same_tiles(pos1, pos2)
+                        puts "King & Bishop vs King & Bishop Insufficient\n"
+                        return true
+                    end
+                end
             end
         end
+        false
+    end
 
-        #puts insufficient_rules(materials)
-        puts materials
-
+    #Checks if there is insufficient material for the match.
+    def insufficient_material
+        materials = { :king => [], :queen => [], :knight => [], 
+            :bishop => [], :rook => [], :pawn => []
+        }
+        @rows.each do | row |
+            row.each do | piece |
+                materials[piece.symbol] << piece.pos if piece?(piece.pos)
+            end
+        end
+        insufficient_rules(materials)
     end
 
     #This function returns a set of destinations after going through a bunch of

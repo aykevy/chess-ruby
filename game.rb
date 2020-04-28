@@ -174,23 +174,22 @@ class Game
             check_exits = @board.checkmate_exit(king)
             check_enpass_exit = checkmate_or_stalemate_enpassant_moves(king)
             if check_exits.empty? && check_enpass_exit.empty?
-                puts "Checkmate, #{get_opposite_color(king)} wins!"
+                puts "Checkmate, #{get_opposite_color(king)} wins!\n\n"
                 return ["Done"]
             else
-                return [true, check_exits + check_enpassant_exits]
+                return [true, check_exits + check_enpass_exit]
             end
         elsif @board.stalemate(king.color)
-
-            ##TESTING
-            @board.insufficient_material ##TESTING
-
             check_enpass_exit = checkmate_or_stalemate_enpassant_moves(king)
             if check_enpass_exit.empty?
-                puts "Stalemate, #{king.color} has no legal moves."
+                puts "Draw, stalement since #{king.color} has no legal moves.\n\n"
                 return ["Done"]
             else
                 return ["Continue"]
             end
+        elsif @board.insufficient_material
+            puts "Draw, insufficient material.\n\n"
+            return ["Done"]
         else
             return ["Continue"]
         end
