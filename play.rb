@@ -20,11 +20,8 @@ class Play
 
     #This is the game loop that continues until checkmate or draws.
     def play
-        #Simulations test place here:
-        simulation_12(@game.board)
-
+        simulation_15(@game.board)
         while true
-            
             #Set up king informations on both sides.
             white_king, black_king = @game.get_kings
             white_castle_moves, in_check_white, white_exit_moves = @game.get_kings_info(white_king)
@@ -47,7 +44,6 @@ class Play
                 s, d = prompt_move
                 @game.move_selection(s, d, in_check_black, black_exit_moves, black_castle_moves)
             end
-
         end
     end
 

@@ -184,8 +184,13 @@ class Game
                 return [true, check_exits + check_enpassant_exits]
             end
         elsif @board.stalemate(king.color)
-            puts "Stalemate, #{king.color} has no legal moves."
-            return ["Done"]
+            check_enpassant_exits = check_enpassant_extra(king)
+            if check_enpassant_exits.empty?
+                puts "Stalemate, #{king.color} has no legal moves."
+                return ["Done"]
+            else
+                return ["Continue"]
+            end
         else
             return ["Continue"]
         end
