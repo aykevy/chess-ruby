@@ -222,7 +222,6 @@ class Board
         end
         @rows[r2][c2].set_symbol(piece_type)
         @rows[r2][c2].moved = true
-
     end
 
     #Does board movement for promotions of the pawn.
