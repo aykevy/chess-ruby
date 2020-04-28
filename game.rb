@@ -94,26 +94,28 @@ class Game
                 puts "INVALID PIECE CHOICE!\n\n"
             end
         else
-            puts "INVALID PROMO MOVE\n\n"
+            puts "INVALID PROMO MOVE!\n\n"
         end
     end
 
     #Gets the positions on the board of pieces that can enpassant (does not
     #check for validity, just gives positions).
     def get_enpassant_positions
-        previous = @board.moves_list.last
-        if previous.length == 2 #Length can be 3 for promotions.
-            s, d = previous
-            start_r, start_c = s
-            dest_r, dest_c = d
+        unless @board.moves_list.empty?
+            previous = @board.moves_list.last
+            if previous.length == 2 #Length can be 3 for promotions.
+                s, d = previous
+                start_r, start_c = s
+                dest_r, dest_c = d
 
-            piece = @board.rows[dest_r][dest_c]
-            enpass_case_one = start_r == 1 && dest_r == 3 && start_c == dest_c
-            enpass_case_two = start_r == 6 && dest_r == 4 && start_c == dest_c
+                piece = @board.rows[dest_r][dest_c]
+                enpass_case_one = start_r == 1 && dest_r == 3 && start_c == dest_c
+                enpass_case_two = start_r == 6 && dest_r == 4 && start_c == dest_c
 
-            if piece.symbol == :pawn && (enpass_case_one || enpass_case_two)
-                moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
-                return moves.select { | row, col = move | col >= 0 && col <= 7 }
+                if piece.symbol == :pawn && (enpass_case_one || enpass_case_two)
+                    moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
+                    return moves.select { | row, col = move | col >= 0 && col <= 7 }
+                end
             end
         end
         []
@@ -141,7 +143,7 @@ class Game
             @board.move_piece(prev_dest, d)
             change_turn
         else
-            puts "INVALID MOVE! That enpassant will check your king.\n\n"
+            puts "INVALID ENPASSANT MOVE! That enpassant will check your king.\n\n"
         end
     end
 
@@ -167,10 +169,10 @@ class Game
         end
     end
 
-    #Checks if the current turn is in checkmate or drawn
+    #Checks if the current turn is in checkmate or drawn.
     def checkmate_or_drawn?(king)
         if @board.check(king.pos)
-            puts "Check, #{king.color} king in check."
+            puts "Check, #{king.color} king in check.\n\n"
             check_exits = @board.checkmate_exit(king)
             check_enpass_exit = checkmate_or_stalemate_enpassant_moves(king)
             if check_exits.empty? && check_enpass_exit.empty?
@@ -213,7 +215,7 @@ class Game
             end
         end
         unless valid.empty?
-            puts "Not yet checkmated or stalemated, possible moves by the king to: \n"
+            puts "Not yet checkmated or stalemated, possible moves by the king to:\n\n"
             print_moves(valid)
         end
         valid

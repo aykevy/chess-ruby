@@ -127,13 +127,32 @@ class Board
         dup_board.check(king_pos) ? false : true
     end
 
+    #This function returns a set of destinations after going through a bunch of
+    #tests like testing for valid moves that wouldn't put the king in check.
+    def get_all_legal_moves(starting_pos)
+        x, y = starting_pos
+        piece = @rows[x][y]
+        if piece.symbol != :king
+            king_pos = kings_location(piece.color)
+            return check_valid_moves(piece, king_pos).map { | start, dest| dest }
+        else
+            return check_valid_moves(piece).map { | start, dest| dest }
+        end
+    end
+
+    #This function returns true if the given destination is a valid move.
+    def valid_move?(start, dest)
+        valid_moves = get_all_legal_moves(start)
+        valid_moves.include?(dest)
+    end
+
     #This function checks if the king can move away to a safe position or can
     #capture a position through the king's movements and returns a set of valid
     #moves.
     def check_king_exits(king)
         valid = check_valid_moves(king)
         unless valid.empty?
-            puts "Not yet checkmated, possible moves by the king to avoid check: \n"
+            puts "Not yet checkmated, possible moves by the king to avoid check: \n\n"
             print_moves(valid)
         end
         puts
@@ -182,8 +201,8 @@ class Board
         count == 0
     end
 
-    #Since we don't have a graphical user interface for tile colors, 
-    #this is a ghetto way to compare if two pieces positions are on the same tile color.
+    #Since we don't have a graphical user interface for tile colors, this is a ghetto
+    #way to compare if two pieces positions are on the same tile color.
     def same_tiles(pos1, pos2)
         idx = [0, 1, 2, 3, 4, 5, 6, 7]
         w_tiles = []
@@ -199,30 +218,20 @@ class Board
         both_on_w || both_on_b
     end
 
-    #The rules for insufficient_material
+    #The rules for insufficient_material.
     def insufficient_rules(materials)
         count = materials.values.map { | v | v.length }.sum
         case count
-        when 2
-            #King vs King
+        when 2 #King vs King
             return true 
-        when 3
-            #King & Knight vs King
-            if materials[:king].length == 2 && materials[:knight].length == 1
-                return true
-            #King & Bishop vs Knight
-            elsif materials[:king].length == 2 && materials[:bishop].length == 1
-                return true
-            end
-        when 4
-            #King & Bishop vs King & Bishop (Same Tile Bishops)
+        when 3 #King & Knight vs King or King & Bishop vs Knight
+            return true if materials[:king].length == 2 && materials[:knight].length == 1
+            return true if materials[:king].length == 2 && materials[:bishop].length == 1
+        when 4 #King & Bishop vs King & Bishop (Same Tile Bishops)
             if materials[:king].length == 2 && materials[:bishop].length == 2
                 pos1, pos2 = materials[:bishop]
                 if @rows[pos1[0]][pos1[1]].color != @rows[pos2[0]][pos2[1]].color
-                    if same_tiles(pos1, pos2)
-                        puts "King & Bishop vs King & Bishop Insufficient\n"
-                        return true
-                    end
+                    return true if same_tiles(pos1, pos2)
                 end
             end
         end
@@ -242,32 +251,10 @@ class Board
         insufficient_rules(materials)
     end
 
-    #This function returns a set of destinations after going through a bunch of
-    #tests like testing for valid moves that wouldn't put the king in check.
-    def get_all_legal_moves(starting_pos)
-        x, y = starting_pos
-        piece = @rows[x][y]
-        if piece.symbol != :king
-            king_pos = kings_location(piece.color)
-            return check_valid_moves(piece, king_pos).map { | start, dest| dest }
-        else
-            return check_valid_moves(piece).map { | start, dest| dest }
-        end
-    end
-
-    #This function returns true if the given destination is a valid move.
-    def valid_move?(start, dest)
-        valid_moves = get_all_legal_moves(start)
-        #Uncomment if you want to see where the valid destinations are for a move.
-        #puts
-        #print "Valid normal move (no castle/enpassant) destinations: #{valid_moves}"
-        #puts
-        valid_moves.include?(dest)
-    end
-
     #Does normal board movement from start to destination.
     def normal_placement(start_pos, end_pos)
         @moves_list << [start_pos, end_pos]
+
         r1, c1 = start_pos
         r2, c2 = end_pos
 
@@ -291,6 +278,7 @@ class Board
     #Does board movement for promotions of the pawn.
     def promotion_placement(start_pos, end_pos, promotion)
         @moves_list << [start_pos, end_pos, promotion]
+        
         r1, c1 = start_pos
         r2, c2 = end_pos
 
