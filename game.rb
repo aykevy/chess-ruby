@@ -3,6 +3,15 @@ require_relative "tools/player"
 require_relative "tools/board_modules/prompt_module"
 require_relative "tools/board_modules/display_module"
 
+#This class allows you to keep track of the turns and movement of the game.
+#It allows you to make the following moves regarding chess:
+#   -Normal moves for every piece
+#   -Castling moves for unmoved kings and rooks
+#   -Promotion moves for pawns located in the second to last row across the board
+#   -Enpassant moves for pawns that have been passed by an opposing pawn
+#The above are available while also making sure they are valid when in check or
+#to not get the player into check if the move were to be made.
+
 class Game
 
     include Prompt
@@ -10,6 +19,7 @@ class Game
 
     attr_accessor :board, :player1, :player2, :turn
 
+    #Initializes the board, turn, and player objects.
     def initialize
         @board = Board.new
         @player1 = Player.new("Player 1", :white)
@@ -126,7 +136,6 @@ class Game
         prev_r, prev_c = prev_dest
 
         if @board.check_valid_pawn_special?(d, current_piece, king_pos, prev_dest)
-            #new
             puts "VALID ENPASSANT MOVE!\n\n"
             @board.move_piece(s, prev_dest)
             @board.move_piece(prev_dest, d)

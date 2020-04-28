@@ -1,7 +1,11 @@
+#The piece class creates the piece object with characteristics of a piece
+#and has common methods to be used outside of the class.
+
 class Piece
 
     attr_accessor :color, :board, :pos, :symbol
 
+    #Initializes all the characteristics of the piece.
     def initialize(color, board, pos)
         @color = color
         @board = board

@@ -6,6 +6,11 @@ require_relative "tools/pawns"
 require_relative "tools/board_modules/setup_module"
 require_relative "tools/board_modules/display_module"
 
+#This class acts as a board that uses a two dimensional array containing
+#piece objects. It keeps tracks of all the moves made and makes sure
+#to check for possible movements that will keep the game going such as
+#ways to exit checkmate and stalemate.
+
 class Board
 
     include Setup
@@ -13,6 +18,8 @@ class Board
 
     attr_accessor :rows, :moves_list
 
+    #Initializes the board class with an empty moves list and a two dimensional
+    #array that will be setup.
     def initialize
         @moves_list = []
         @rows = Array.new(8) { Array.new(8) }

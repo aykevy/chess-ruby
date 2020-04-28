@@ -1,23 +1,29 @@
 require_relative "piece"
 require_relative "piece_modules/slide_module"
 
+#The sliding class derives from the piece class and will either act as
+#a bishop, rook, or queen.
+
 class SlidingPiece < Piece
 
     include Slideable
 
     attr_accessor :moved
 
+    #Initializes all the characteristics of the piece and sets the moved attribute.
     def initialize(color, board, pos)
         super
         @moved = false
     end
 
+    #Creates a copy of the piece.
     def copy(c, b, p, s)
         copy_piece = SlidingPiece.new(c, b, p)
         copy_piece.set_symbol(s)
         copy_piece
     end
 
+    #Gets the unblocked moves of the piece.
     def get_unblocked_moves(direction)
         result = []
         direction.each do | pos |
@@ -32,6 +38,7 @@ class SlidingPiece < Piece
         result
     end
 
+    #Gets the common valid moves of the piece.
     def get_moves
         valid = []
         case @symbol

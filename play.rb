@@ -3,6 +3,8 @@ require_relative "tools/board_modules/prompt_module"
 require_relative "tools/board_modules/display_module"
 require_relative "tools/test_modules/simulation_module"
 
+#This class allows the player to play a game of chess.
+
 class Play
 
     include Prompt
@@ -11,6 +13,7 @@ class Play
 
     attr_accessor :game
 
+    #Initializes a new game.
     def initialize
         @game = Game.new
     end

@@ -1,22 +1,26 @@
 require_relative "piece"
 
+#The pawn class derives from the piece class and acts like a pawn.
+
 class Pawn < Piece
 
     attr_accessor :moved
 
+    #Initializes all the characteristics of the piece and sets the moved attribute.
     def initialize(color, board, pos)
         super
         @moved = false
     end
 
+    #Creates a copy of the piece.
     def copy(c, b, p, s)
         copy_piece = Pawn.new(c, b, p)
         copy_piece.set_symbol(s)
         copy_piece
     end
 
+    #This rule only applies when the pawns have not moved since the start of the game.
     def two_step_forward
-        #This rule only applies when the pawns have not moved since the start of the game.
         row, col = @pos
         raw = []
         if row == 1 || row == 6
@@ -30,6 +34,7 @@ class Pawn < Piece
         bounded = raw.select { | x, y = dir | x >= 0 && x <= 7 && y >= 0 && y <= 7 && !piece?([x,y]) }
     end
 
+    #Gets the common valid moves of the piece.
     def get_moves
         #Last move in each array is a forward move, we will pop it later.
         dirs = @color == :white ? [[-1, -1], [-1, 1], [-1, 0]] : [[1, -1], [1, 1], [1, 0]]
