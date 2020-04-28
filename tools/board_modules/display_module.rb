@@ -4,11 +4,9 @@
 module Display
     
     #This function prints the current chess board.
-    #White pieces are denoted by *
-    #Black pieces are denoted by $
     #This game assumes there game is being played with a black terminal background.
-    
-    def print_board(board_rows, board_tiles)
+    #This version has the tiles, but it may be hard on the eyes.
+    def print_board(board_rows, board_tiles, pref)
         puts "Trackers^"
         puts
         puts
@@ -17,6 +15,11 @@ module Display
         puts
         puts "Note: Emoji colors depends on the background"
         puts "environment (:white is bottom, :black is top)"
+        if pref == "tiles"
+            puts "Note: To see dots instead of colored tiles, use the different print_board version."
+        elsif pref == "dots"
+            puts "Note: To see colored tiles instead of dots, use the different print_board version."
+        end
         puts
         puts
         puts "     The Board    "
@@ -27,8 +30,12 @@ module Display
             render_row = "#{idx}  "
             sub_arr.each do | piece |
                 if piece.is_a?(NullPiece)
-                    white_tiles, black_tiles = board_tiles
-                    white_tiles.include?(piece.pos) ? render_row += "◻️" : render_row += "◼️"
+                    if pref == "dots"
+                        render_row += "."
+                    elsif pref == "tiles"
+                        white_tiles, black_tiles = board_tiles
+                        white_tiles.include?(piece.pos) ? render_row += "◻️" : render_row += "◼️"
+                    end
                 else
                     case piece.symbol
                     when :pawn
@@ -98,12 +105,20 @@ module Display
         puts
     end
 
-    #This will print everything above.
+    #This will print everything above with the tiles board.
     def print_tracker_and_board(turn, white_castle_moves, black_castle_moves, get_enpassant_positions, board_rows, board_tiles)
         print_turn(turn)
         print_castle_moves(white_castle_moves, black_castle_moves)
         print_enpassant_moves(get_enpassant_positions)
-        print_board(board_rows, board_tiles)
+        print_board(board_rows, board_tiles, "tiles")
+    end
+
+    #This will print everything above with the dot board.
+    def print_tracker_and_board_v2(turn, white_castle_moves, black_castle_moves, get_enpassant_positions, board_rows, board_tiles)
+        print_turn(turn)
+        print_castle_moves(white_castle_moves, black_castle_moves)
+        print_enpassant_moves(get_enpassant_positions)
+        print_board(board_rows, board_tiles, "dots")
     end
 
 end

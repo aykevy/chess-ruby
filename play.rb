@@ -20,7 +20,7 @@ class Play
 
     #This is the game loop that continues until checkmate or draws.
     def play
-        simulation_14(@game.board)
+        #simulation_13(@game.board)
         while true
             #Set up king informations on both sides.
             white_king, black_king = @game.get_kings
@@ -28,7 +28,9 @@ class Play
             black_castle_moves, in_check_black, black_exit_moves = @game.get_kings_info(black_king)
 
             #Print Interface (Can remove trackers by running individual functions from display)
-            print_tracker_and_board(@game.turn, white_castle_moves, black_castle_moves, @game.get_enpassant_positions, @game.board.rows, @game.board.tiles)
+            #Version 1 has the tiles (may be hard on the eyes).
+            #Version 2 uses dots (easier on the eyes).
+            print_tracker_and_board_v2(@game.turn, white_castle_moves, black_castle_moves, @game.get_enpassant_positions, @game.board.rows, @game.board.tiles)
            
             #Make moves depending on turn.
             if @game.turn.color == :white

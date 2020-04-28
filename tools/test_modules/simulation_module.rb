@@ -266,7 +266,6 @@ module Simulation
             [[1, 3], [4, 3]], [[1, 7], [2, 7]], [[0, 2], [1, 7]],
             [[1, 4], [2, 4]], [[1, 2], [3, 4]], [[0, 5], [2, 3]],
             [[0, 4], [1, 3]], [[6, 7], [4, 7]], [[0, 6], [2, 5]]
-
         ]
         simulate_intro.each do | start, dest = sub_arr |
             board.move_piece(start, dest)
