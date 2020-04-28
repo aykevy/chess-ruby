@@ -13,25 +13,25 @@ class Pawn < Piece
     end
 
     #Creates a copy of the piece.
-    def copy(c, b, p, s)
-        copy_piece = Pawn.new(c, b, p)
-        copy_piece.set_symbol(s)
+    def copy(color, board, piece, symbol)
+        copy_piece = Pawn.new(color, board, piece)
+        copy_piece.set_symbol(symbol)
         copy_piece
     end
 
     #This rule only applies when the pawns have not moved since the start of the game.
     def two_step_forward
         row, col = @pos
-        raw = []
+        positions = []
         if row == 1 || row == 6
             case @color
             when :white
-                raw << [-2 + row, 0 + col]
+                positions << [-2 + row, 0 + col]
             when :black
-                raw << [2 + row, 0 + col]
+                positions << [2 + row, 0 + col]
             end
         end
-        bounded = raw.select { | x, y = dir | x >= 0 && x <= 7 && y >= 0 && y <= 7 && !piece?([x,y]) }
+        positions.select { | x, y = dir | x >= 0 && x <= 7 && y >= 0 && y <= 7 && !piece?([x,y]) }
     end
 
     #Gets the common valid moves of the piece.

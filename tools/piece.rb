@@ -14,8 +14,8 @@ class Piece
     end
 
     #Sets the symbol given s.
-    def set_symbol(s)
-        @symbol = s
+    def set_symbol(symbol)
+        @symbol = symbol
     end
 
     #Determines if the position is a piece on the board and is not part of

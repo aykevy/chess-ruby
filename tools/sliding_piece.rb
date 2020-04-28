@@ -17,9 +17,9 @@ class SlidingPiece < Piece
     end
 
     #Creates a copy of the piece.
-    def copy(c, b, p, s)
-        copy_piece = SlidingPiece.new(c, b, p)
-        copy_piece.set_symbol(s)
+    def copy(color, board, piece, symbol)
+        copy_piece = SlidingPiece.new(color, board, piece)
+        copy_piece.set_symbol(symbol)
         copy_piece
     end
 
