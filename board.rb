@@ -99,7 +99,7 @@ class Board
 
     #Similar to check_valid_moves, this only checks one move and they are special cases.
     #If you are enpassanting, prev_dest will be used to delete an extra place on
-    #the board (the piece getting capture). Otherwise you'll be using this for promotion
+    #the board (the piece getting captured). Otherwise you'll be using this for promotion
     #as well. The purpose of this function is to return true or false whether or not
     #the king will be in check from doing these two moves.
     def check_valid_pawn_special?(intended_move, piece, king_pos, prev_dest = nil)
@@ -117,6 +117,7 @@ class Board
             dup_board.rows[r3][c3] = NullPiece.new(:color, dup_board, [r3, c3])
         end
 
+        #If causes king to be in check, return false because of invalid move.
         dup_board.check(king_pos) ? false : true
     end
 
@@ -168,8 +169,7 @@ class Board
         @rows.each do | row |
             row.each do | piece |
                 if piece.color == color
-                    moves = get_all_legal_moves(piece.pos)
-                    count += moves.length
+                    count += get_all_legal_moves(piece.pos).length
                 end
             end
         end
@@ -183,8 +183,7 @@ class Board
         piece = @rows[x][y]
         if piece.symbol != :king
             king_pos = kings_location(piece.color)
-            after_check = check_valid_moves(piece, king_pos).map { | start, dest| dest }
-            return after_check
+            return check_valid_moves(piece, king_pos).map { | start, dest| dest }
         else
             #We don't add a king_pos cause we're checking the king position
             #itself after it moves.

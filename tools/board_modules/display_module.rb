@@ -17,7 +17,7 @@ module Display
         puts "============The Board============="
         puts "----------------------------------"
         puts "   0   1   2   3   4   5   6   7 "
-        puts "---------------------------------"
+        puts "----------------------------------"
         board_rows.each_with_index do | sub_arr, idx |
             render_row = "#{idx}  "
             sub_arr.each do | piece |
