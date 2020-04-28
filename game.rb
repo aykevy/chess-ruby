@@ -42,7 +42,7 @@ class Game
     end
 
     #Generates information for a king before testing for checks and validation.
-    def king_info(king)
+    def get_kings_info(king)
         castle_moves = king.castle
         in_check = false
         exit_moves = []
@@ -61,128 +61,30 @@ class Game
         @board.rows[row][col].symbol == :pawn
     end
 
-    #Checks if the current turn is in checkmate or stalemate.
-    #Case 1: If in check, return [true, check_exits]
-    #Case 2: If in checkmate, return ["Done"]
-    #Case 3: If in stalemate, return ["Done"]
-    #Case 4: If none above, return ["Continue"]
-    def checkmate_or_stalemate?(king)
+    #Gets the valid positions to where the pawn can promote.
+    def get_promotion_positions(s)
+        row, col = s
+        piece = @board.rows[row][col]
+        get_positions = piece.get_moves
+        king_pos = get_kings.select { | king_piece | king_piece.color == @turn.color }.first.pos
+        get_positions.select { | move | @board.check_valid_pawn_special?(move, piece, king_pos) }
+    end
 
-        #bug is here. after doing a check passant move
-        #to avoid check, there is a bug where u cant move anything except
-        #the piece that'll put black in check
-
-        if @board.check(king.pos)
-            puts "Check, #{king.color} king in check."
-            check_exits = @board.checkmate_exit(king)
-            check_enpassant_exits = check_enpassant_extra(king)
-
-            if check_exits.empty? && check_enpassant_exits.empty?
-                puts "Checkmate, #{get_opposite_color(king)} wins!"
-                return ["Done"]
+    #Helper function that promotes the pawn.
+    def do_promotion(s, d)
+        valid = get_promotion_positions(s)
+        if valid.include?(d)
+            p_row, p_col = s
+            get_promo = prompt_promotion
+            if ["q", "r", "b", "n"].include?(get_promo)
+                promotion = [@board.rows[p_row][p_col].color, get_promo]
+                @board.move_piece(s, d, promotion)
+                change_turn #NEW
             else
-                return [true, check_exits + check_enpassant_exits]
-            end
-
-        elsif @board.stalemate(king.color)
-            puts "Stalemate, #{king.color} has no legal moves."
-            return ["Done"]
-
-        else
-            return ["Continue"]
-
-        end
-    end
-
-    def check_enpassant_extra(king)
-        valid = []
-        enpass_pos = get_enpassant_positions
-
-        unless enpass_pos.empty?
-            _, prev_dest = @board.moves_list.last
-            enpass_dest = get_enpassant_destination
-            @board.rows.each do | row |
-                row.each do | piece |
-                    if piece.symbol == :pawn && piece.color == king.color && enpass_pos.include?(piece.pos)
-                        if @board.check_valid_pawn_special?(enpass_dest, piece, king.pos, prev_dest)
-                            valid << [piece.pos, enpass_dest]
-                        end
-                    end
-                end
-            end
-        end
-
-        unless valid.empty?
-            puts "Not yet checkmated or stalemated, possible moves by the king to: \n"
-            print_moves(valid)
-        end
-
-        valid
-    end
-
-    #Moves the piece from start to destination.
-    def normal_move(s, d)
-        if @board.valid_move?(s, d)
-            puts "VALID MOVE!\n\n"
-            @board.move_piece(s, d)
-            change_turn
-        else
-            puts "INVALID MOVE!\n\n"
-        end
-    end
-
-    #Makes a move that gets the king out of check.
-    def check_move(s, d, exit_moves)
-        if exit_moves.include?([s, d])
-            if  get_enpassant_positions.include?(s) && d == get_enpassant_destination
-                do_enpassant(s, d)
-            else
-                puts "VALID MOVE!\n\n"
-                @board.move_piece(s, d)
-                change_turn
+                puts "INVALID PIECE CHOICE!\n\n"
             end
         else
-            puts "INVALID MOVE!\n\n"
-        end
-    end
-
-    #Helper function that does the castling.
-    def do_castle(king_s, king_d)
-        case king_d
-        when [7, 2]
-            rook_s, rook_d = [[7, 0], [7, 3]]
-            @board.move_piece(king_s, king_d)
-            @board.move_piece(rook_s, rook_d)
-        when [7, 6]
-            rook_s, rook_d = [[7, 7], [7, 5]]
-            @board.move_piece(king_s, king_d)
-            @board.move_piece(rook_s, rook_d)
-        when [0, 2]
-            rook_s, rook_d = [[0, 0], [0, 3]]
-            @board.move_piece(king_s, king_d)
-            @board.move_piece(rook_s, rook_d)
-        when [0, 6]
-            rook_s, rook_d = [[0, 7], [0, 5]]
-            @board.move_piece(king_s, king_d)
-            @board.move_piece(rook_s, rook_d)
-        end
-    end
-
-    #Gives the king the option to do a normal move or castle.
-    def king_move(s, d, castle_move_list)
-        if @board.valid_move?(s, d) || castle_move_list.include?(d)
-            if castle_move_list.include?(d)
-                puts "VALID CASTLE MOVE!\n\n"
-                do_castle(s, d)
-                change_turn
-            else
-                puts "VALID MOVE!\n\n"
-                puts
-                @board.move_piece(s, d)
-                change_turn
-            end
-        else
-            puts "INVALID MOVE!\n\n"
+            puts "INVALID PROMO MOVE\n\n"
         end
     end
 
@@ -234,30 +136,117 @@ class Game
         end
     end
 
-    #Gets the valid positions to where the pawn can promote.
-    def get_valid_promotion_positions(s)
-        row, col = s
-        piece = @board.rows[row][col]
-        get_positions = piece.get_moves
-        king_pos = get_kings.select { | king_piece | king_piece.color == @turn.color }.first.pos
-        get_positions.select { | move | @board.check_valid_pawn_special?(move, piece, king_pos) }
+    #Helper function that does the castling.
+    def do_castle(king_s, king_d)
+        case king_d
+        when [7, 2]
+            rook_s, rook_d = [[7, 0], [7, 3]]
+            @board.move_piece(king_s, king_d)
+            @board.move_piece(rook_s, rook_d)
+        when [7, 6]
+            rook_s, rook_d = [[7, 7], [7, 5]]
+            @board.move_piece(king_s, king_d)
+            @board.move_piece(rook_s, rook_d)
+        when [0, 2]
+            rook_s, rook_d = [[0, 0], [0, 3]]
+            @board.move_piece(king_s, king_d)
+            @board.move_piece(rook_s, rook_d)
+        when [0, 6]
+            rook_s, rook_d = [[0, 7], [0, 5]]
+            @board.move_piece(king_s, king_d)
+            @board.move_piece(rook_s, rook_d)
+        end
     end
 
-    #Helper function that promotes the pawn.
-    def do_promotion(s, d)
-        valid = get_valid_promotion_positions(s)
-        if valid.include?(d)
-            p_row, p_col = s
-            get_promo = prompt_promotion
-            if ["q", "r", "b", "n"].include?(get_promo)
-                promotion = [@board.rows[p_row][p_col].color, get_promo]
-                @board.move_piece(s, d, promotion)
-                change_turn #NEW
+    #Checks if the current turn is in checkmate or stalemate.
+    #Case 1: If in check, return [true, check_exits]
+    #Case 2: If in checkmate, return ["Done"]
+    #Case 3: If in stalemate, return ["Done"]
+    #Case 4: If none above, return ["Continue"]
+    def checkmate_or_stalemate?(king)
+        if @board.check(king.pos)
+            puts "Check, #{king.color} king in check."
+            check_exits = @board.checkmate_exit(king)
+            check_enpassant_exits = check_enpassant_extra(king)
+            if check_exits.empty? && check_enpassant_exits.empty?
+                puts "Checkmate, #{get_opposite_color(king)} wins!"
+                return ["Done"]
             else
-                puts "INVALID PIECE CHOICE!"
+                return [true, check_exits + check_enpassant_exits]
+            end
+        elsif @board.stalemate(king.color)
+            puts "Stalemate, #{king.color} has no legal moves."
+            return ["Done"]
+        else
+            return ["Continue"]
+        end
+    end
+
+    #Checks if the current turn in check can be saved by an enpassant move.
+    def check_enpassant_extra(king)
+        valid = []
+        enpass_pos = get_enpassant_positions
+        unless enpass_pos.empty?
+            _, prev_dest = @board.moves_list.last
+            enpass_dest = get_enpassant_destination
+            @board.rows.each do | row |
+                row.each do | piece |
+                    if piece.symbol == :pawn && piece.color == king.color && enpass_pos.include?(piece.pos)
+                        if @board.check_valid_pawn_special?(enpass_dest, piece, king.pos, prev_dest)
+                            valid << [piece.pos, enpass_dest]
+                        end
+                    end
+                end
+            end
+        end
+        unless valid.empty?
+            puts "Not yet checkmated or stalemated, possible moves by the king to: \n"
+            print_moves(valid)
+        end
+        valid
+    end
+
+    #Moves the piece from start to destination.
+    def normal_move(s, d)
+        if @board.valid_move?(s, d)
+            puts "VALID MOVE!\n\n"
+            @board.move_piece(s, d)
+            change_turn
+        else
+            puts "INVALID MOVE!\n\n"
+        end
+    end
+
+    #Makes a move that gets the king out of check.
+    def check_move(s, d, exit_moves)
+        if exit_moves.include?([s, d])
+            if get_enpassant_positions.include?(s) && d == get_enpassant_destination
+                do_enpassant(s, d)
+            else
+                puts "VALID MOVE!\n\n"
+                @board.move_piece(s, d)
+                change_turn
             end
         else
-            puts "INVALID PROMO MOVE, ONLY: #{valid}"
+            puts "INVALID MOVE!\n\n"
+        end
+    end
+
+    #Gives the king the option to do a normal move or castle.
+    def king_move(s, d, castle_move_list)
+        if @board.valid_move?(s, d) || castle_move_list.include?(d)
+            if castle_move_list.include?(d)
+                puts "VALID CASTLE MOVE!\n\n"
+                do_castle(s, d)
+                change_turn
+            else
+                puts "VALID MOVE!\n\n"
+                puts
+                @board.move_piece(s, d)
+                change_turn
+            end
+        else
+            puts "INVALID MOVE!\n\n"
         end
     end
 

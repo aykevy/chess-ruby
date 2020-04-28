@@ -229,6 +229,8 @@ module Simulation
         end
     end
 
+    #Test 13:
+    #Enpassant is the last option move to prevent checkmate.
     def simulation_13(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
@@ -248,7 +250,7 @@ module Simulation
         end
     end
 
-    #extra pawn
+    #Test 14:
     def simulation_14(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
@@ -269,14 +271,16 @@ module Simulation
         end
     end
 
-    # more stalemates?
+    #Test 15:
+    #Stalemate with enpassant being the last available move.
+    def simulation_15(board)
 
-    #insufficient material
+    end
 
-    #two step forward to protect king 
+    #Test 16:
+    #Insufficient Material Draw
+    def simulation_15(board)
 
-    #enpassant to get king out of check or checkmate
-
-    #show that promotion pawn capture piece will king out of check
+    end
 
 end

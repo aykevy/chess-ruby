@@ -254,7 +254,7 @@ class Board
         end
     end
 
-    #This function just moves one piece at the a given start position to
+    #This function just moves one piece at the given start position to
     #the destination. It just moves the piece, does not check for validity.
     #This is good for testing if you wanna simulate a premade board for the
     #intro.

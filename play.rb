@@ -18,14 +18,14 @@ class Play
     #This is the game loop that continues until checkmate or draws.
     def play
         #Simulations test place here:
-        simulation_14(@game.board)
+        simulation_12(@game.board)
 
         while true
             
             #Set up king informations on both sides.
             white_king, black_king = @game.get_kings
-            white_castle_moves, in_check_white, white_exit_moves = @game.king_info(white_king)
-            black_castle_moves, in_check_black, black_exit_moves = @game.king_info(black_king)
+            white_castle_moves, in_check_white, white_exit_moves = @game.get_kings_info(white_king)
+            black_castle_moves, in_check_black, black_exit_moves = @game.get_kings_info(black_king)
 
             #Print Interface (Can remove trackers by running individual functions from display)
             print_tracker_and_board(@game.turn, white_castle_moves, black_castle_moves, @game.get_enpassant_positions, @game.board.rows)
@@ -37,7 +37,6 @@ class Play
                 in_check_white, white_exit_moves = w_update if w_update.length == 2
                 s, d = prompt_move
                 @game.move_selection(s, d, in_check_white, white_exit_moves, white_castle_moves)
-
             else
                 b_update = @game.checkmate_or_stalemate?(black_king)
                 break if b_update.length == 1 && b_update.first == "Done"
