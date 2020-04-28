@@ -6,38 +6,42 @@ module Display
     #This function prints the current chess board.
     #White pieces are denoted by *
     #Black pieces are denoted by $
-    #P = Pawn, R = Rook, B = Bishop, N = Knight, Q = Queen, K = King
+    #This game assumes there game is being played with a black terminal background.
+    
     def print_board(board_rows)
         puts "Trackers^"
         puts
         puts
         puts
         puts "Chess Game"
-        puts "----------------------------------"
-        puts "============The Board============="
-        puts "----------------------------------"
-        puts "   0   1   2   3   4   5   6   7 "
-        puts "----------------------------------"
+        puts
+        puts "Note: Emoji colors depends on the background"
+        puts "environment (:white is bottom, :black is top)"
+        puts
+        puts
+        puts "           The Board            "
+        puts
+        puts "   0   1   2   3   4   5   6   7"
+        puts "--------------------------------"
         board_rows.each_with_index do | sub_arr, idx |
             render_row = "#{idx}  "
             sub_arr.each do | piece |
                 if piece.is_a?(NullPiece)
                     render_row += ". "
                 else
-                    piece.color == :white ? render_row += "*" : render_row += "$"
                     case piece.symbol
                     when :pawn
-                        render_row += "P"
+                        piece.color == :white ? render_row += "♙ " : render_row += "♟ "
                     when :rook
-                        render_row += "R"
+                        piece.color == :white ? render_row += "♖ " : render_row += "♜ "
                     when :knight
-                        render_row += "N"
+                        piece.color == :white ? render_row += "♘ " : render_row += "♞ "
                     when :bishop
-                        render_row += "B"
+                        piece.color == :white ? render_row += "♗ " : render_row += "♝ "
                     when :queen
-                        render_row += "Q"
+                        piece.color == :white ? render_row += "♕ " : render_row += "♛ "
                     when :king
-                        render_row += "K"
+                        piece.color == :white ? render_row += "♔ " : render_row += "♚ "
                     end
                 end
                 render_row += "  "

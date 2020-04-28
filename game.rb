@@ -123,9 +123,12 @@ class Game
 
     #Gets the destination of the move where a pawn will go to after doing enpassant.
     def get_enpassant_destination
-        _, prev_dest = @board.moves_list.last
-        prev_r, prev_c = prev_dest
-        @turn.color == :white ? [prev_r - 1, prev_c] : [prev_r + 1, prev_c]
+        unless @board.moves_list.empty?
+            _, prev_dest = @board.moves_list.last
+            prev_r, prev_c = prev_dest
+            @turn.color == :white ? [prev_r - 1, prev_c] : [prev_r + 1, prev_c]
+        end
+        []
     end
 
     #Helper function that does the enpassant.
@@ -197,7 +200,8 @@ class Game
         end
     end
 
-    #Checks if the current turn in check can be saved by an enpassant move.
+    #Checks if the current turn in check or stalemate can extend the game
+    #by an enpassant move.
     def checkmate_or_stalemate_enpassant_moves(king)
         valid = []
         enpass_pos = get_enpassant_positions
