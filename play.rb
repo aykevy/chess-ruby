@@ -20,7 +20,7 @@ class Play
 
     #This is the game loop that continues until checkmate or draws.
     def play
-        simulation_15(@game.board)
+        simulation_14(@game.board)
         while true
             #Set up king informations on both sides.
             white_king, black_king = @game.get_kings
@@ -32,13 +32,13 @@ class Play
            
             #Make moves depending on turn.
             if @game.turn.color == :white
-                w_update = @game.checkmate_or_stalemate?(white_king)
+                w_update = @game.checkmate_or_drawn?(white_king)
                 break if w_update.length == 1 && w_update.first == "Done"
                 in_check_white, white_exit_moves = w_update if w_update.length == 2
                 s, d = prompt_move
                 @game.move_selection(s, d, in_check_white, white_exit_moves, white_castle_moves)
             else
-                b_update = @game.checkmate_or_stalemate?(black_king)
+                b_update = @game.checkmate_or_drawn?(black_king)
                 break if b_update.length == 1 && b_update.first == "Done"
                 in_check_black, black_exit_moves = b_update if b_update.length == 2
                 s, d = prompt_move

@@ -106,8 +106,8 @@ class Game
             s, d = previous
             start_r, start_c = s
             dest_r, dest_c = d
-            piece = @board.rows[dest_r][dest_c]
 
+            piece = @board.rows[dest_r][dest_c]
             enpass_case_one = start_r == 1 && dest_r == 3 && start_c == dest_c
             enpass_case_two = start_r == 6 && dest_r == 4 && start_c == dest_c
 
@@ -167,25 +167,25 @@ class Game
         end
     end
 
-    #Checks if the current turn is in checkmate or stalemate.
-    #Case 1: If in check, return [true, check_exits]
-    #Case 2: If in checkmate, return ["Done"]
-    #Case 3: If in stalemate, return ["Done"]
-    #Case 4: If none above, return ["Continue"]
-    def checkmate_or_stalemate?(king)
+    #Checks if the current turn is in checkmate or drawn
+    def checkmate_or_drawn?(king)
         if @board.check(king.pos)
             puts "Check, #{king.color} king in check."
             check_exits = @board.checkmate_exit(king)
-            check_enpassant_exits = check_enpassant_extra(king)
-            if check_exits.empty? && check_enpassant_exits.empty?
+            check_enpass_exit = checkmate_or_stalemate_enpassant_moves(king)
+            if check_exits.empty? && check_enpass_exit.empty?
                 puts "Checkmate, #{get_opposite_color(king)} wins!"
                 return ["Done"]
             else
                 return [true, check_exits + check_enpassant_exits]
             end
         elsif @board.stalemate(king.color)
-            check_enpassant_exits = check_enpassant_extra(king)
-            if check_enpassant_exits.empty?
+
+            ##TESTING
+            @board.insufficient_material ##TESTING
+
+            check_enpass_exit = checkmate_or_stalemate_enpassant_moves(king)
+            if check_enpass_exit.empty?
                 puts "Stalemate, #{king.color} has no legal moves."
                 return ["Done"]
             else
@@ -197,7 +197,7 @@ class Game
     end
 
     #Checks if the current turn in check can be saved by an enpassant move.
-    def check_enpassant_extra(king)
+    def checkmate_or_stalemate_enpassant_moves(king)
         valid = []
         enpass_pos = get_enpassant_positions
         unless enpass_pos.empty?

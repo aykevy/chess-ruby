@@ -8,8 +8,8 @@ require_relative "tools/board_modules/display_module"
 
 #This class acts as a board that uses a two dimensional array containing
 #piece objects. It keeps tracks of all the moves made and makes sure
-#to check for possible movements that will keep the game going such as
-#ways to exit checkmate and stalemate.
+#to check for possible states such as check, stalemate, insufficient material to
+#let the game class know how to proceed on forth with the game.
 
 class Board
 
@@ -64,9 +64,9 @@ class Board
         @rows[x][y].is_a?(Piece) && !@rows[x][y].is_a?(NullPiece)
     end
 
-    #Will check if the given position is in check.
+    #Will check if the given kings position is in check.
     def check(pos)
-        king_color = @rows[pos[0]][pos[1]].color #New
+        king_color = @rows[pos[0]][pos[1]].color
         @rows.each do | row |
             row.each do | piece |
                 if piece?(piece.pos) && piece.color != king_color
@@ -124,7 +124,6 @@ class Board
             dup_board.rows[r3][c3] = NullPiece.new(:color, dup_board, [r3, c3])
         end
 
-        #If causes king to be in check, return false because of invalid move.
         dup_board.check(king_pos) ? false : true
     end
 
@@ -183,6 +182,63 @@ class Board
         count == 0
     end
 
+    #Since we don't have a graphical user interface for tile colors, 
+    #this is a ghetto way to compare if two pieces positions are on the same tile color.
+    def same_tiles(pos1, pos2)
+        idx = [0, 1, 2, 3, 4, 5, 6, 7]
+        w_tiles = []
+        b_tiles = []
+        [0, 2, 4, 6].each do | num |
+            idx.each { | i | i.even? ? w_tiles << [num, i] : b_tiles << [num, i] }
+        end
+        [1, 3, 5, 7].each do | num |
+            idx.each { | i | i.odd? ? w_tiles << [num, i] : b_tiles << [num, i] }
+        end
+        both_on_w = w_tiles.include?(pos1) && w_tiles.include?(pos2)
+        both_on_b = b_tiles.include?(pos1) && b_tiles.include?(pos2)
+        both_on_w || both_on_b
+    end
+
+    def insufficient_rules(materials)
+        count = materials.values.flatten.length
+        case count
+        when 2
+            #King vs. King
+            puts 2
+        when 3
+            #King & Bishop vs. King
+            #King & Knight vs. King
+            puts 3
+        when 4
+            #King & Bishop Vs King & Bishop
+            #with Bishop's on same tile color/positions
+            puts 4
+        end
+
+    end
+
+    def insufficient_material
+        materials = { 
+            :king => [], 
+            :queen => [],
+            :knight => [],
+            :bishop => [],
+            :rook => [],
+            :pawn => [],
+        }
+
+        @rows.each do | row |
+            row.each do | piece |
+                #:color is the default for empty spaces.
+                materials[piece.symbol] << [piece.color] if piece.color != :color
+            end
+        end
+
+        #puts insufficient_rules(materials)
+        puts materials
+
+    end
+
     #This function returns a set of destinations after going through a bunch of
     #tests like testing for valid moves that wouldn't put the king in check.
     def get_all_legal_moves(starting_pos)
@@ -192,8 +248,6 @@ class Board
             king_pos = kings_location(piece.color)
             return check_valid_moves(piece, king_pos).map { | start, dest| dest }
         else
-            #We don't add a king_pos cause we're checking the king position
-            #itself after it moves.
             return check_valid_moves(piece).map { | start, dest| dest }
         end
     end
@@ -202,9 +256,9 @@ class Board
     def valid_move?(start, dest)
         valid_moves = get_all_legal_moves(start)
         #Uncomment if you want to see where the valid destinations are for a move.
-        puts
-        print "Valid normal move (no castle/enpassant) destinations: #{valid_moves}"
-        puts
+        #puts
+        #print "Valid normal move (no castle/enpassant) destinations: #{valid_moves}"
+        #puts
         valid_moves.include?(dest)
     end
 
