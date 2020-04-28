@@ -78,5 +78,20 @@ module Setup
             end
         end
     end
+
+    #Provides the positions of the tile positions on the board that
+    #matches accordingly with color.
+    def setup_tiles
+        idx = [0, 1, 2, 3, 4, 5, 6, 7]
+        w_tiles = []
+        b_tiles = []
+        [0, 2, 4, 6].each do | num |
+            idx.each { | i | i.even? ? w_tiles << [num, i] : b_tiles << [num, i] }
+        end
+        [1, 3, 5, 7].each do | num |
+            idx.each { | i | i.odd? ? w_tiles << [num, i] : b_tiles << [num, i] }
+        end
+        [w_tiles, b_tiles]
+    end
     
 end

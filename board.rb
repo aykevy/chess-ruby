@@ -16,14 +16,15 @@ class Board
     include Setup
     include Display
 
-    attr_accessor :rows, :moves_list
+    attr_accessor :moves_list, :rows, :tiles
 
-    #Initializes the board class with an empty moves list and a two dimensional
-    #array that will be setup.
+    #Initializes the board class with an empty moves list, a two dimensional
+    #array that will be setup, and a list of positions for the tiles.
     def initialize
         @moves_list = []
         @rows = Array.new(8) { Array.new(8) }
         setup_board(@rows, self)
+        @tiles = setup_tiles
     end
 
     #Creates a copy of the board by creating a new board instance and passing
@@ -204,17 +205,9 @@ class Board
     #Since we don't have a graphical user interface for tile colors, this is a ghetto
     #way to compare if two pieces positions are on the same tile color.
     def same_tiles(pos1, pos2)
-        idx = [0, 1, 2, 3, 4, 5, 6, 7]
-        w_tiles = []
-        b_tiles = []
-        [0, 2, 4, 6].each do | num |
-            idx.each { | i | i.even? ? w_tiles << [num, i] : b_tiles << [num, i] }
-        end
-        [1, 3, 5, 7].each do | num |
-            idx.each { | i | i.odd? ? w_tiles << [num, i] : b_tiles << [num, i] }
-        end
-        both_on_w = w_tiles.include?(pos1) && w_tiles.include?(pos2)
-        both_on_b = b_tiles.include?(pos1) && b_tiles.include?(pos2)
+        white_tiles, black_tiles = @tiles
+        both_on_w = white_tiles.include?(pos1) && @white_tiles.include?(pos2)
+        both_on_b = black_tiles.include?(pos1) && @black_tiles.include?(pos2)
         both_on_w || both_on_b
     end
 

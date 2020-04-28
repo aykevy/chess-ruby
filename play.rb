@@ -1,6 +1,7 @@
 require_relative "game.rb"
 require_relative "tools/board_modules/prompt_module"
 require_relative "tools/board_modules/display_module"
+require_relative "tools/test_modules/simulation_module"
 
 #This class allows the player to play a game of chess.
 
@@ -8,6 +9,7 @@ class Play
 
     include Prompt
     include Display
+    include Simulation
 
     attr_accessor :game
 
@@ -18,6 +20,7 @@ class Play
 
     #This is the game loop that continues until checkmate or draws.
     def play
+        simulation_14(@game.board)
         while true
             #Set up king informations on both sides.
             white_king, black_king = @game.get_kings
@@ -25,7 +28,7 @@ class Play
             black_castle_moves, in_check_black, black_exit_moves = @game.get_kings_info(black_king)
 
             #Print Interface (Can remove trackers by running individual functions from display)
-            print_tracker_and_board(@game.turn, white_castle_moves, black_castle_moves, @game.get_enpassant_positions, @game.board.rows)
+            print_tracker_and_board(@game.turn, white_castle_moves, black_castle_moves, @game.get_enpassant_positions, @game.board.rows, @game.board.tiles)
            
             #Make moves depending on turn.
             if @game.turn.color == :white

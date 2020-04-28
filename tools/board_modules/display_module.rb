@@ -8,7 +8,7 @@ module Display
     #Black pieces are denoted by $
     #This game assumes there game is being played with a black terminal background.
     
-    def print_board(board_rows)
+    def print_board(board_rows, board_tiles)
         puts "Trackers^"
         puts
         puts
@@ -19,32 +19,33 @@ module Display
         puts "environment (:white is bottom, :black is top)"
         puts
         puts
-        puts "           The Board            "
+        puts "     The Board    "
         puts
-        puts "   0   1   2   3   4   5   6   7"
-        puts "--------------------------------"
+        puts "   0 1 2 3 4 5 6 7"
+        puts "------------------"
         board_rows.each_with_index do | sub_arr, idx |
             render_row = "#{idx}  "
             sub_arr.each do | piece |
                 if piece.is_a?(NullPiece)
-                    render_row += ". "
+                    white_tiles, black_tiles = board_tiles
+                    white_tiles.include?(piece.pos) ? render_row += "◻️" : render_row += "◼️"
                 else
                     case piece.symbol
                     when :pawn
-                        piece.color == :white ? render_row += "♙ " : render_row += "♟ "
+                        piece.color == :white ? render_row += "♙" : render_row += "♟"
                     when :rook
-                        piece.color == :white ? render_row += "♖ " : render_row += "♜ "
+                        piece.color == :white ? render_row += "♖" : render_row += "♜"
                     when :knight
-                        piece.color == :white ? render_row += "♘ " : render_row += "♞ "
+                        piece.color == :white ? render_row += "♘" : render_row += "♞"
                     when :bishop
-                        piece.color == :white ? render_row += "♗ " : render_row += "♝ "
+                        piece.color == :white ? render_row += "♗" : render_row += "♝"
                     when :queen
-                        piece.color == :white ? render_row += "♕ " : render_row += "♛ "
+                        piece.color == :white ? render_row += "♕" : render_row += "♛"
                     when :king
-                        piece.color == :white ? render_row += "♔ " : render_row += "♚ "
+                        piece.color == :white ? render_row += "♔" : render_row += "♚"
                     end
                 end
-                render_row += "  "
+                render_row += " "
             end
             puts render_row
         end
@@ -98,11 +99,11 @@ module Display
     end
 
     #This will print everything above.
-    def print_tracker_and_board(turn, white_castle_moves, black_castle_moves, get_enpassant_positions, board_rows)
+    def print_tracker_and_board(turn, white_castle_moves, black_castle_moves, get_enpassant_positions, board_rows, board_tiles)
         print_turn(turn)
         print_castle_moves(white_castle_moves, black_castle_moves)
         print_enpassant_moves(get_enpassant_positions)
-        print_board(board_rows)
+        print_board(board_rows, board_tiles)
     end
 
 end

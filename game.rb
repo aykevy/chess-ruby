@@ -128,7 +128,7 @@ class Game
             prev_r, prev_c = prev_dest
             @turn.color == :white ? [prev_r - 1, prev_c] : [prev_r + 1, prev_c]
         end
-        []
+        #adding an empty array here can fuck things up
     end
 
     #Helper function that does the enpassant.
@@ -207,7 +207,7 @@ class Game
         enpass_pos = get_enpassant_positions
         unless enpass_pos.empty?
             _, prev_dest = @board.moves_list.last
-            enpass_dest = get_enpassant_destination
+            enpass_dest = get_enpassant_destination #wouldve had to check one more time here
             @board.rows.each do | row |
                 row.each do | piece |
                     if piece.symbol == :pawn && piece.color == king.color && enpass_pos.include?(piece.pos)
