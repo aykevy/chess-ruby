@@ -74,7 +74,6 @@ class SteppingPiece < Piece
     #Lets you get the places where the king may castle.
     def castle
         castle_spots = []
-
         #This section checks if all the spaces are empty to castle.
         case @color
         when :white
@@ -88,7 +87,6 @@ class SteppingPiece < Piece
             castle_spots << [0, 2] if queen_side.all? { | pos | !piece?(pos) }
             castle_spots << [0, 6] if king_side.all? { | pos | !piece?(pos) }
         end
-
         #This section checks if the rooks and kings have not moved and
         #also checks for symbol because maybe the spot is null.
         can_castle = castle_spots.select do | spot |
@@ -111,7 +109,6 @@ class SteppingPiece < Piece
                 rook.symbol == :rook && king.symbol == :king && !rook.moved && !king.moved
             end
         end
-
         #This section checks if there are no pieces of opposite color attacking the
         #empty spaces where the kings and rooks can move.
         no_checks_currently ? no_attacks_on_castle_paths(can_castle) : []

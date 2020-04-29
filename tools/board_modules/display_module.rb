@@ -13,8 +13,7 @@ module Display
         puts
         puts "Chess Game"
         puts
-        puts "Note: Emoji colors depends on the background"
-        puts "environment (:white is bottom, :black is top)"
+        puts "Note: Emoji colors depends on the background environment (:white is bottom, :black is top)."
         if pref == "tiles"
             puts "Note: To see dots instead of colored tiles, use the different print_board version."
         elsif pref == "dots"
@@ -63,7 +62,7 @@ module Display
     def print_moves(moves)
         moves.each do | move |
             start, des = move
-            puts "#{start} -> #{des} "
+            puts "#{start} -> #{des}\n\n"
         end
     end
 

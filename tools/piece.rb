@@ -13,7 +13,7 @@ class Piece
         @symbol = nil
     end
 
-    #Sets the symbol given s.
+    #Sets the symbol.
     def set_symbol(symbol)
         @symbol = symbol
     end

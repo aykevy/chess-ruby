@@ -9,7 +9,7 @@ require_relative "tools/board_modules/display_module"
 #This class acts as a board that uses a two dimensional array containing
 #piece objects. It keeps tracks of all the moves made and makes sure
 #to check for possible states such as check, stalemate, insufficient material to
-#let the game class know how to proceed on forth with the game.
+#let the game class know how to proceed on with the game as it progresses.
 
 class Board
 
@@ -19,7 +19,7 @@ class Board
     attr_accessor :moves_list, :rows, :tiles
 
     #Initializes the board class with an empty moves list, a two dimensional
-    #array that will be setup, and a list of positions for the tiles.
+    #array that will be setup with piece objects, and a list of positions for the tiles.
     def initialize
         @moves_list = []
         @rows = Array.new(8) { Array.new(8) }
@@ -106,7 +106,7 @@ class Board
     #If you are enpassanting, prev_dest will be used to delete an extra place on
     #the board (the piece getting captured). Otherwise you'll be using this for promotion
     #as well. The purpose of this function is to return true or false whether or not
-    #the king will be in check from doing these two moves.
+    #the king will be in check from doing these two type of moves.
     def check_valid_pawn_special?(intended_move, piece, king_pos, prev_dest = nil)
         dup_board = copy
         dup_piece = piece.copy(piece.color, dup_board, intended_move, piece.symbol)
@@ -152,9 +152,9 @@ class Board
         valid
     end
 
-    #This function checks if the king can be protected by other pieces from check
-    #using the ones that are the king's color. This will return a set of valid moves
-    #that will either block the king from being in check or capture the checking piece.
+    #This function checks if the king can be protected by other pieces of same color.
+    #This will return a set of valid moves that will either block the king from 
+    #being in check or capture the checking piece.
     def check_king_guards(king)
         valid = []
         @rows.each do | row |
@@ -172,7 +172,7 @@ class Board
     end
 
     #This function returns all of the possible moves when the king is in check. If
-    #the moves returned is empty, then it is checkmate for the king.
+    #the moves returned is empty, then no valid moves from exits and guards.
     def checkmate_exit(king)
         valid_moves = check_king_exits(king)
         valid_moves += check_king_guards(king)
@@ -193,8 +193,7 @@ class Board
         count == 0
     end
 
-    #Since we don't have a graphical user interface for tile colors, this is a ghetto
-    #way to compare if two pieces positions are on the same tile color.
+    #Compares if two position are in the same tile color.
     def same_tiles(pos1, pos2)
         white_tiles, black_tiles = @tiles
         both_on_w = white_tiles.include?(pos1) && white_tiles.include?(pos2)

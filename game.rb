@@ -284,20 +284,42 @@ class Game
         end
     end
 
+    #Checks if the input is not garbage.
+    def not_garbage_input(s, d)
+        begin
+            s_row, s_col = s
+            d_row, d_col = d
+            s_valid = s_row >= 0 && s_row <= 7 && s_col >= 0 && s_col <= 7
+            d_valid = d_row >= 0 && d_row <= 7 && d_col >= 0 && d_col <= 7
+            if s_valid && d_valid
+                return true
+            else
+                puts "That input is not in range.\n\n"
+                return false
+            end
+        rescue
+            puts "The input is garbage.\n\n"
+            return false
+        end
+        false
+    end
+
     #This is the move selection list.
     def move_selection(s, d, in_check, exit_moves, castle_moves)
-        if @board.rows[s[0]][s[1]].color != @turn.color
-            puts "That is not your piece or it is a empty space!\n\n"
-        else
-            if in_check
-                check_move(s, d, exit_moves)
+        if not_garbage_input(s, d)
+            if @board.rows[s[0]][s[1]].color != @turn.color
+                puts "That is not your piece or it is a empty space!\n\n"
             else
-                if is_king?(s)
-                    king_move(s, d, castle_moves)
-                elsif is_pawn?(s)
-                    pawn_move(s, d)
+                if in_check
+                    check_move(s, d, exit_moves)
                 else
-                    normal_move(s, d)
+                    if is_king?(s)
+                        king_move(s, d, castle_moves)
+                    elsif is_pawn?(s)
+                        pawn_move(s, d)
+                    else
+                        normal_move(s, d)
+                    end
                 end
             end
         end
