@@ -104,7 +104,7 @@ class Board
     end
 
     #Similar to check_valid_moves, this only checks one move and they are special cases.
-    #If you are enpassanting, prev_dest will be used to delete an extra place on
+    #If you are en passanting, prev_dest will be used to delete an extra place on
     #the board (the piece getting captured). Otherwise you'll be using this for promotion
     #as well. The purpose of this function is to return true or false whether or not
     #the king will be in check from doing these two type of moves.

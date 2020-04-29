@@ -186,7 +186,7 @@ module Simulation
     end
 
     #Test 11:
-    #Enpassant should not cause king in check.
+    #En passant should not cause king in check.
     def simulation_11(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
@@ -232,7 +232,7 @@ module Simulation
     end
 
     #Test 13:
-    #Enpassant is the last option move to prevent checkmate.
+    #En passant is the last option move to prevent checkmate.
     def simulation_13(board)
         simulate_intro = [
             [[6, 1], [5, 1]], [[6, 2], [5, 2]], [[6, 3], [5, 3]], 
@@ -253,7 +253,7 @@ module Simulation
     end
 
     #Test 14:
-    #Not stalemate yet, with enpassant being the last available move when 
+    #Not stalemate yet, with en passant being the last available move when 
     #opponent's pawn goes forward twice.
     def simulation_14(board)
         simulate_intro = [

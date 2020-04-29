@@ -8,7 +8,7 @@ require_relative "tools/board_modules/display_module"
 #   -Normal moves for every piece
 #   -Castling moves for unmoved kings and rooks
 #   -Promotion moves for pawns located in the second to last row across the board
-#   -Enpassant moves for pawns that have been passed by an opposing pawn
+#   -En passant moves for pawns that have been passed by an opposing pawn
 #The above are available while also making sure they are valid when in check or
 #to not get the player into check if the move were to be made.
 
@@ -98,7 +98,7 @@ class Game
         end
     end
 
-    #Gets the positions on the board of pieces that can enpassant (does not
+    #Gets the positions on the board of pieces that can en passant (does not
     #check for validity, just gives positions).
     def get_enpassant_positions
         unless @board.moves_list.empty?
@@ -119,7 +119,7 @@ class Game
         []
     end
 
-    #Gets the destination of the move where a pawn will go to after doing enpassant.
+    #Gets the destination of the move where a pawn will go to after doing en passant.
     def get_enpassant_destination
         unless @board.moves_list.empty?
             _, prev_dest = @board.moves_list.last
@@ -133,7 +133,7 @@ class Game
         []
     end
 
-    #Helper function that does the enpassant.
+    #Helper function that does the en passant.
     def do_enpassant(s, d)
         king_piece = get_kings.select { | king_piece | king_piece.color == @turn.color }
         king_pos = king_piece.first.pos
@@ -141,12 +141,12 @@ class Game
         _, prev_dest = @board.moves_list.last
         prev_r, prev_c = prev_dest
         if @board.check_valid_pawn_special?(d, current_piece, king_pos, prev_dest)
-            puts "VALID ENPASSANT MOVE!\n\n"
+            puts "VALID EN PASSANT MOVE!\n\n"
             @board.move_piece(s, prev_dest)
             @board.move_piece(prev_dest, d)
             change_turn
         else
-            puts "INVALID ENPASSANT MOVE! That enpassant will check your king.\n\n"
+            puts "INVALID EN PASSANT MOVE! That en passant will check your king.\n\n"
         end
     end
 
@@ -201,7 +201,7 @@ class Game
     end
 
     #Checks if the current turn in check or stalemate can extend the game
-    #by an enpassant move.
+    #by an en passant move.
     def checkmate_or_stalemate_enpassant_moves(king)
         valid = []
         enpass_pos = get_enpassant_positions
@@ -269,9 +269,9 @@ class Game
         end
     end
 
-    #Gives the pawn the option to do a promotion, enpassant, or normal move.
+    #Gives the pawn the option to do a promotion, en passant, or normal move.
     #Piece color should already be checked for in move selection, so only
-    #worry about if your pawns positions are included in enpassant move list.
+    #worry about if your pawns positions are included in en passant move list.
     def pawn_move(s, d)
         pos_that_can_enpass = get_enpassant_positions
         enpass_dest = get_enpassant_destination

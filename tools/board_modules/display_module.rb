@@ -93,11 +93,11 @@ module Display
         puts
     end
 
-    #This will print the positions that can enpassant.
+    #This will print the positions that can en passant.
     def print_enpassant_moves(enpassant_moves)
-        puts "========Enpassant Tracker========="
+        puts "========En passant Tracker========"
         puts
-        puts "Valid positions that can enpassant unless"
+        puts "Valid positions that can en passant unless"
         puts "is not your piece color or is a null space:"
         puts "#{enpassant_moves}"
         puts
