@@ -1,4 +1,4 @@
-require_relative "board"
+require_relative "tools/board"
 require_relative "tools/player"
 require_relative "tools/board_modules/prompt_module"
 require_relative "tools/board_modules/display_module"

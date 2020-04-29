@@ -1,15 +1,16 @@
-require_relative "tools/piece"
-require_relative "tools/null_piece"
-require_relative "tools/sliding_piece"
-require_relative "tools/stepping_piece"
-require_relative "tools/pawns"
-require_relative "tools/board_modules/setup_module"
-require_relative "tools/board_modules/display_module"
+require_relative "piece"
+require_relative "null_piece"
+require_relative "sliding_piece"
+require_relative "stepping_piece"
+require_relative "pawns"
+require_relative "board_modules/setup_module"
+require_relative "board_modules/display_module"
 
 #This class acts as a board that uses a two dimensional array containing
 #piece objects. It keeps tracks of all the moves made and makes sure
 #to check for possible states such as check, stalemate, insufficient material to
-#let the game class know how to proceed on with the game as it progresses.
+#let the game class know how to proceed on with the game as it progresses before
+#making moves.
 
 class Board
 
