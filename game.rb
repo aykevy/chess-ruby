@@ -89,7 +89,7 @@ class Game
             if ["q", "r", "b", "n"].include?(get_promo)
                 promotion = [@board.rows[p_row][p_col].color, get_promo]
                 @board.move_piece(s, d, promotion)
-                change_turn #NEW
+                change_turn
             else
                 puts "INVALID PIECE CHOICE!\n\n"
             end
@@ -107,11 +107,9 @@ class Game
                 s, d = previous
                 start_r, start_c = s
                 dest_r, dest_c = d
-
                 piece = @board.rows[dest_r][dest_c]
                 enpass_case_one = start_r == 1 && dest_r == 3 && start_c == dest_c
                 enpass_case_two = start_r == 6 && dest_r == 4 && start_c == dest_c
-
                 if piece.symbol == :pawn && (enpass_case_one || enpass_case_two)
                     moves = [[dest_r, dest_c - 1], [dest_r, dest_c + 1]]
                     return moves.select { | row, col = move | col >= 0 && col <= 7 }
@@ -126,20 +124,22 @@ class Game
         unless @board.moves_list.empty?
             _, prev_dest = @board.moves_list.last
             prev_r, prev_c = prev_dest
-            @turn.color == :white ? [prev_r - 1, prev_c] : [prev_r + 1, prev_c]
+            if @turn.color == :white
+                return [prev_r - 1, prev_c]
+            else
+                return [prev_r + 1, prev_c]
+            end
         end
-        #adding an empty array here can fuck things up
+        []
     end
 
     #Helper function that does the enpassant.
     def do_enpassant(s, d)
         king_piece = get_kings.select { | king_piece | king_piece.color == @turn.color }
         king_pos = king_piece.first.pos
-
         current_piece = @board.rows[s[0]][s[1]]
         _, prev_dest = @board.moves_list.last
         prev_r, prev_c = prev_dest
-
         if @board.check_valid_pawn_special?(d, current_piece, king_pos, prev_dest)
             puts "VALID ENPASSANT MOVE!\n\n"
             @board.move_piece(s, prev_dest)
@@ -207,7 +207,7 @@ class Game
         enpass_pos = get_enpassant_positions
         unless enpass_pos.empty?
             _, prev_dest = @board.moves_list.last
-            enpass_dest = get_enpassant_destination #wouldve had to check one more time here
+            enpass_dest = get_enpassant_destination
             @board.rows.each do | row |
                 row.each do | piece |
                     if piece.symbol == :pawn && piece.color == king.color && enpass_pos.include?(piece.pos)

@@ -89,13 +89,10 @@ class Board
         moves.each_with_index do | move, idx |
             dup_board = copy
             dup_piece = piece.copy(piece.color, dup_board, move, piece.symbol)
-
             r1, c1 = piece.pos
             r2, c2 = move
-
             dup_board.rows[r2][c2] = dup_piece
             dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
-
             if king_pos.nil?
                 valid << [[r1, c1], move] unless dup_board.check(move)
             else
@@ -113,18 +110,14 @@ class Board
     def check_valid_pawn_special?(intended_move, piece, king_pos, prev_dest = nil)
         dup_board = copy
         dup_piece = piece.copy(piece.color, dup_board, intended_move, piece.symbol)
-
         r1, c1 = piece.pos
         r2, c2 = intended_move
-
         dup_board.rows[r2][c2] = dup_piece
         dup_board.rows[r1][c1] = NullPiece.new(:color, dup_board, [r1, c1])
-
         unless prev_dest.nil?
             r3, c3 = prev_dest
             dup_board.rows[r3][c3] = NullPiece.new(:color, dup_board, [r3, c3])
         end
-
         dup_board.check(king_pos) ? false : true
     end
 
@@ -156,7 +149,6 @@ class Board
             puts "Not yet checkmated, possible moves by the king to avoid check: \n\n"
             print_moves(valid)
         end
-        puts
         valid
     end
 
@@ -173,10 +165,9 @@ class Board
             end
         end
         unless valid.empty?
-            puts "Not yet checkmated, possible moves that will block/capture checker: \n"
+            puts "Not yet checkmated, possible moves that will block/capture checker: \n\n"
             print_moves(valid)
         end
-        puts
         valid
     end
 
@@ -247,15 +238,11 @@ class Board
     #Does normal board movement from start to destination.
     def normal_placement(start_pos, end_pos)
         @moves_list << [start_pos, end_pos]
-
         r1, c1 = start_pos
         r2, c2 = end_pos
-
         piece_color = @rows[r1][c1].color
         piece_type = @rows[r1][c1].symbol
-
         @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
-
         case piece_type
         when :pawn
             @rows[r2][c2] = Pawn.new(piece_color, self, [r2, c2])
@@ -271,13 +258,10 @@ class Board
     #Does board movement for promotions of the pawn.
     def promotion_placement(start_pos, end_pos, promotion)
         @moves_list << [start_pos, end_pos, promotion]
-        
         r1, c1 = start_pos
         r2, c2 = end_pos
-
         piece_color, desired_promo = promotion
         @rows[r1][c1] = NullPiece.new(:color, self, [r1, c1])
-
         case desired_promo
         when "q"
             @rows[r2][c2] = SlidingPiece.new(piece_color, self, [r2, c2])

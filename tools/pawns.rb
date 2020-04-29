@@ -40,17 +40,13 @@ class Pawn < Piece
         dirs = @color == :white ? [[-1, -1], [-1, 1], [-1, 0]] : [[1, -1], [1, 1], [1, 0]]
         added = dirs.map { | x, y = dir | [x + @pos[0], y + @pos[1]] }
         bounded_moves = added.select { | x, y = dir | x >= 0 && x <= 7 && y >= 0 && y <= 7 }
-
         valid = []
-        
         #If there is a piece of any color blocking, you can't move forward
         forward = bounded_moves.pop
-
         unless piece?(forward)
             valid << forward
-            valid += two_step_forward #If you can't move forward one time obviously you can't move two forward.
+            valid += two_step_forward
         end
-    
         #Checks for opposite color pieces in diagonals.
         bounded_moves.each { | pos | valid << pos if piece?(pos) && opposite_color?(pos) }
         valid
