@@ -197,8 +197,8 @@ class Board
     #way to compare if two pieces positions are on the same tile color.
     def same_tiles(pos1, pos2)
         white_tiles, black_tiles = @tiles
-        both_on_w = white_tiles.include?(pos1) && @white_tiles.include?(pos2)
-        both_on_b = black_tiles.include?(pos1) && @black_tiles.include?(pos2)
+        both_on_w = white_tiles.include?(pos1) && white_tiles.include?(pos2)
+        both_on_b = black_tiles.include?(pos1) && black_tiles.include?(pos2)
         both_on_w || both_on_b
     end
 

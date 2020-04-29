@@ -20,7 +20,7 @@ class Play
 
     #This is the game loop that continues until checkmate or draws.
     def play
-        simulation_14(@game.board)
+        simulation_16(@game.board)
         while true
             #Set up king informations on both sides.
             white_king, black_king = @game.get_kings
