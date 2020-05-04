@@ -208,7 +208,7 @@ class Board
         case count
         when 2 #King vs King
             return true 
-        when 3 #King & Knight vs King or King & Bishop vs Knight
+        when 3 #King & Knight vs King or King & Bishop vs King
             return true if materials[:king].length == 2 && materials[:knight].length == 1
             return true if materials[:king].length == 2 && materials[:bishop].length == 1
         when 4 #King & Bishop vs King & Bishop (Same Tile Bishops)
