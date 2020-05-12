@@ -1,4 +1,4 @@
-require_relative "game"
+require_relative "tools/game"
 require_relative "tools/board_modules/prompt_module"
 require_relative "tools/board_modules/display_module"
 

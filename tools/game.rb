@@ -1,7 +1,7 @@
-require_relative "tools/board"
-require_relative "tools/player"
-require_relative "tools/board_modules/prompt_module"
-require_relative "tools/board_modules/display_module"
+require_relative "board"
+require_relative "player"
+require_relative "board_modules/prompt_module"
+require_relative "board_modules/display_module"
 
 #This class allows you to keep track of the turns and movement of the game.
 #It allows you to make the following moves regarding chess:
