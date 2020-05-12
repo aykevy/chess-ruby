@@ -4,7 +4,7 @@
 module Display
     
     #This function prints the current chess board.
-    #This game assumes there game is being played with a black terminal background.
+    #This game is assumbed to be played with a black terminal background.
     #The version with tiles may be hard on the eyes, so there is a dot version.
     def print_board(board_rows, board_tiles, pref)
         puts "Trackers^"
